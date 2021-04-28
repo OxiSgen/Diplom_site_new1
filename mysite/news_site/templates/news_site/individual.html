@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h2>Dynamic content</h2>
+
+<p class="myclass">На данной станице отображается, сколько раз пользователь {{ user.get_username }} зашёл на неё: </p>
+
+
+{% for PeriodicTask in periodic %}
+    <p> {{ PeriodicTask.name }}  </p>
+{% endfor %}
+
+
+<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time {% else %} times{% endif %}.</p>
+
+{% load django_charting %}
+
+<body>
+    <p>{% render_chart chart %}</p>
+</body>
+
+{% endblock %}

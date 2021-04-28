@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<h2>Выберите желательные новостные ресурсы</h2>
+Сайты и их приоритеты для пользователя:
+{% for url in user_urls %}
+  {{ url.url }} - {{ url.prior }};
+{% endfor %}
+
+
+<form class="User-profile-form" method="post" action="">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+  <input class="btn btn-primary" type="submit" value="Save" name="save" />
+</form>
+
+{% endblock %}
