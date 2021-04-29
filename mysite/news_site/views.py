@@ -26,12 +26,19 @@ class News1(generic.ListView):
     return render(request, 'base.html') """
     # news = News
 
-    def get(self, request):
+        def get(self, request):
         num_visits1 = request.session.get('num_visits1', 0)
         request.session['num_visits1'] = num_visits1 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__lte=5)
+        user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+        id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+        user_urls_values = UrlsTable.objects.all().filter(
+            id__in=id_request
+        ).values_list("url", flat=True)
+        print("user_urls_values", user_urls_values)
+
+        news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
         return render(
             request,
             'news_site/news_list.html',
