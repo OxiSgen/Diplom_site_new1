@@ -37,7 +37,10 @@ def setup_periodic_tasks(sender, **kwargs):
 @shared_task(name="test")
 def test():
     print('lol')
-    '''news = Pars('https://lenta.ru/')
-    for n in news:
-        s = News(news_text=n[0], news_url=n[1], news_hype_rate=0, pub_date=n[2])
-        s.save()'''
+        urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    for url in urls:
+        print(url)
+        print(type(url))
+        for n in Pars(url):
+            s = News(news_text=n[0], news_url=n[1], news_hype_rate=0, pub_date=n[2])
+            s.save()
