@@ -37,7 +37,7 @@ def setup_periodic_tasks(sender, **kwargs):
 @shared_task(name="test")
 def test():
     print('lol')
-        urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
     for url in urls:
         print(url)
         print(type(url))
