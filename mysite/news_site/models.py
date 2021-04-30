@@ -31,7 +31,7 @@ class News(models.Model):
     news_url = models.CharField(max_length=200, blank=True, null=True)
     site_url = models.CharField(max_length=200, blank=True, null=True)
     news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
-    pub_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    pub_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.news_text
