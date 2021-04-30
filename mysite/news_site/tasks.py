@@ -4,8 +4,7 @@ from .modules.rss_parser import main as Pars
 from .models import News, CustomUser, UrlsTable
 from celery import shared_task
 from celery.schedules import crontab
-from time import mktime
-from datetime import datetime
+from dateutil.parser import parse
 
 
 from django_celery_beat.models import PeriodicTask, PeriodicTasks, IntervalSchedule
@@ -42,9 +41,6 @@ def test():
     urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
     for url in urls:
         for n in Pars(url):
-            # date = n[2][5:]
-            # d = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%f')
-            # new_date = d.strftime('%Y-%m-%d %I:%M %p')
-            # print(new_date)
-            s = News(news_text=n[0], news_url=n[1], news_hype_rate=0, pub_date=n[2], site_url=url)
+            date = parse(n[2]).strftime("%Y-%m-%d %H:%M:%S")
+            s = News(news_text=n[0], news_url=n[1], news_hype_rate=0, pub_date=date, site_url=url)
             s.save()
