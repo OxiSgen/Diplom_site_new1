@@ -122,7 +122,7 @@ def news_for_parsing_html(url):
 def main(url):
     href = url
     rss = rss_feeds_urls(href)
-    return rss_feedparser(''.join(rss))
+    return rss_feedparser(''.join(rss[0]))
 
     '''
     try:
