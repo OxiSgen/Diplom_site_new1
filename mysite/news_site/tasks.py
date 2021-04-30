@@ -1,7 +1,7 @@
 from celery.schedules import crontab
 from celery import Celery
 from .modules.rss_parser import main as Pars
-from .models import News, CustomUser
+from .models import News, CustomUser, UrlsTable
 from celery import shared_task
 from celery.schedules import crontab
 

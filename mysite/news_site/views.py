@@ -26,7 +26,7 @@ class News1(generic.ListView):
     return render(request, 'base.html') """
     # news = News
 
-        def get(self, request):
+    def get(self, request):
         num_visits1 = request.session.get('num_visits1', 0)
         request.session['num_visits1'] = num_visits1 + 1
         request.session.save()
