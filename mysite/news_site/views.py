@@ -9,6 +9,8 @@ from .charts import DemoChart
 
 from .forms import UserProfileForm
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 import pickle
 
 user_interest = []
@@ -36,13 +38,21 @@ class News1(generic.ListView):
         user_urls_values = UrlsTable.objects.all().filter(
             id__in=id_request
         ).values_list("url", flat=True)
-        print("user_urls_values", user_urls_values)
 
         news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': numbers},
         )
 
 
