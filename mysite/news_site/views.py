@@ -35,7 +35,7 @@ class News1(generic.ListView):
             news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
 
         else:
-            news_list = News.objects.filter(news_hype_rate__range=(0, 5))
+            news_list = News.objects.filter(news_hype_rate__lte=5)
 
         page = request.GET.get('page', 1)
         paginator = Paginator(news_list, 18)
@@ -62,7 +62,17 @@ class News2(generic.ListView):
         request.session['num_visits2'] = num_visits2 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__range=(6, 20))
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(6, 20))
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__range=(6, 20))
         return render(
             request,
             'news_site/news_list.html',
@@ -80,7 +90,17 @@ class News3(generic.ListView):
         request.session['num_visits3'] = num_visits3 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__range=(21, 100))
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(21, 100))
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__range=(21, 100))
         return render(
             request,
             'news_site/news_list.html',
@@ -98,7 +118,17 @@ class News4(generic.ListView):
         request.session['num_visits4'] = num_visits4 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__range=(101, 200))
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(101, 200))
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__range=(101, 200))
         return render(
             request,
             'news_site/news_list.html',
@@ -116,7 +146,17 @@ class News5(generic.ListView):
         request.session['num_visits5'] = num_visits5 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__range=(201, 1000))
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(201, 1000))
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__range=(201, 1000))
         return render(
             request,
             'news_site/news_list.html',
@@ -134,7 +174,17 @@ class News6(generic.ListView):
         request.session['num_visits6'] = num_visits6 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__gt=1000)
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__gt=1000)
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__gt=1000)
         return render(
             request,
             'news_site/news_list.html',
@@ -152,7 +202,17 @@ class News7(generic.ListView):
         request.session['num_visits7'] = num_visits7 + 1
         request.session.save()
 
-        news_list = News.objects.filter(news_hype_rate__gt=500)
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
+
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__gt=500)
+
+        else:
+            news_list = News.objects.filter(news_hype_rate__gt=500)
         return render(
             request,
             'news_site/news_list.html',
