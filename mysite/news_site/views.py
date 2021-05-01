@@ -190,11 +190,6 @@ class Unregistered(generic.TemplateView):
 class UserProfile(generic.TemplateView):
     template_name = 'news_site/profile.html'
 
-
-class Akak(generic.TemplateView):
-    pass
-
-
     def get_context_data(self, **kwargs):
         user_urls = PriorityForUser.objects.all().filter(user=self.request.user)
         if self.request.method == 'POST':
@@ -215,4 +210,3 @@ class Akak(generic.TemplateView):
             'form': form,
         }
         return context
-
