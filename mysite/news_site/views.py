@@ -11,35 +11,31 @@ from .forms import UserProfileForm
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
 import pickle
 
 user_interest = []
 
 
 class News1(generic.ListView):
-    """news = Pars()
-    for n in news:
-        s = News(news_text=n[1], news_url=n[0], news_hype_rate=n[2])
-        s.save()"""
-    """ if request.method == "POST" and request.is_ajax():
-        form = ContactForm(request.POST)
-        form.save()
-        return JsonResponse({"success": True}, status=200)
-    return render(request, 'base.html') """
-    # news = News
 
     def get(self, request):
         num_visits1 = request.session.get('num_visits1', 0)
         request.session['num_visits1'] = num_visits1 + 1
         request.session.save()
+        if request.user.is_authenticated:
+            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
+            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_urls_values = UrlsTable.objects.all().filter(
+                id__in=id_request
+            ).values_list("url", flat=True)
 
-        user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-        id_request = [url for url in user_urls_id.values_list("url", flat=True)]
-        user_urls_values = UrlsTable.objects.all().filter(
-            id__in=id_request
-        ).values_list("url", flat=True)
+            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
 
-        news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
+        else:
+            news_list = News.objects.filter(news_hype_rate__range=(0, 5))
 
         page = request.GET.get('page', 1)
         paginator = Paginator(news_list, 18)
@@ -52,7 +48,9 @@ class News1(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': numbers},
+            {'object_list': numbers,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -68,7 +66,9 @@ class News2(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -84,7 +84,9 @@ class News3(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -100,7 +102,9 @@ class News4(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -116,7 +120,9 @@ class News5(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -132,7 +138,9 @@ class News6(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -148,7 +156,9 @@ class News7(generic.ListView):
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list},
+            {'object_list': news_list,
+             'urls': UrlsTable.objects.all(),
+             },
         )
 
 
@@ -168,6 +178,7 @@ class NewsIndividual(generic.TemplateView):
             'chart': DemoChart(queryset=list(self.request.session.items())),
             'num_visits': self.request.session.items(),  # num_visits appended
             'periodic': periodic_tasks,
+            'urls': UrlsTable.objects.all(),
         }
         return context
 
@@ -178,6 +189,11 @@ class Unregistered(generic.TemplateView):
 
 class UserProfile(generic.TemplateView):
     template_name = 'news_site/profile.html'
+
+
+class Akak(generic.TemplateView):
+    pass
+
 
     def get_context_data(self, **kwargs):
         user_urls = PriorityForUser.objects.all().filter(user=self.request.user)

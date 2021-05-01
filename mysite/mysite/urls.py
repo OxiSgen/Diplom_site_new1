@@ -18,8 +18,8 @@ from django.urls import path, include, re_path
 from django.views.generic import RedirectView, TemplateView
 
 urlpatterns = [
-    re_path(r'news_site/', include('news_site.urls')),
-    re_path(r'', RedirectView.as_view(url='/news_site/news1/', permanent=True)),
+    path('news_site/', include('news_site.urls')),
+    path('', RedirectView.as_view(url='/news_site/news1', permanent=True)),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls'), name='login'),
 

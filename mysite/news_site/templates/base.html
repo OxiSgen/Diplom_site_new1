@@ -24,9 +24,9 @@
     <div class="side-panel">
       <label class="side-button-2" for="side-checkbox">+</label>
       <div class="side-title">Новостные ресурсы:</div>
-      {% if urlstable %}
-            {% for news in urlstable %}
-              <a class="card-text" href="{{ news.news_url }}"> {{ news.news_text }}</a>
+      {% if urls %}
+            {% for news in urls %}
+              <a class="card-text" href="{{ news.url }}"> {{ news.site_name }} <br> </a>
       {% endfor %}
           {% else %}
             <p>There are no news.</p>

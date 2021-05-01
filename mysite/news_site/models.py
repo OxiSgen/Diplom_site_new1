@@ -8,6 +8,7 @@ from django_celery_beat.models import PeriodicTask
 
 class UrlsTable(models.Model):
     url = models.CharField(max_length=200, null=True, blank=True)
+    site_name = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.url

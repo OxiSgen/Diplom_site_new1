@@ -3,6 +3,7 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
+    path(r'', views.Akak.as_view()),
     re_path(r'news1/', views.News1.as_view(), name='News1'),
     re_path(r'news2/', views.News2.as_view(), name='News2'),
     re_path(r'news3/', views.News3.as_view(), name='News3'),
