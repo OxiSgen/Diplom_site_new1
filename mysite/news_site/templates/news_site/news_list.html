@@ -29,9 +29,9 @@
                       <small class="text-muted">News_hype: {{ news.news_hype_rate }}</small>
                     </div>
                     <small class="text-muted">В других новостных источниках: <br></small>
-                    {% for new in news.same_news.all %}
-                      <a class="card-text" href="{{ new.news_url }}"> {{ new.news_text }}</a>
-                      <small class="text-muted"> {{ new.pub_date }} {{ new.site_url.site_name }} <br></small>
+                    {% for same_news in news.same_news.all %}
+                      <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
+                      <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
                     {% endfor %}
                   </div>
                 </div>
