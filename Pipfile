@@ -17,6 +17,8 @@ requests = "*"
 django-celery-beat = "*"
 django-crispy-forms = "*"
 python-dateutil = "*"
+django-feed-reader = "*"
+fuzzywuzzy = "*"
 
 [dev-packages]
 

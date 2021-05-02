@@ -27,8 +27,15 @@
     width: 60%;
 }
 
+#block {
+    height: 500px;
+    border-bottom: 3px solid #BFE2FF;
+}
 
-
+.btn-group {
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+    padding-bottom: 5px;
+}
 
 /* Оформление панели */
 #side-checkbox {

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django_charting',
     'django_celery_beat',
     'crispy_forms',
+    'feeds',
+
 ]
 
 
@@ -149,3 +151,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 AUTH_USER_MODEL = 'news_site.CustomUser'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+FEEDS_USER_AGENT = "news_site/1.0"

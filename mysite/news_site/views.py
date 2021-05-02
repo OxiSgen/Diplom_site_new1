@@ -2,7 +2,7 @@ import requests
 from django.shortcuts import render
 from django.views import generic
 
-from .models import News, UrlsTable, PriorityForUser, CustomUser
+from .models import News, UrlsTable, PriorityForUser, CustomUser, SameNews
 from django_celery_beat.models import PeriodicTask
 
 from .charts import DemoChart
@@ -32,7 +32,7 @@ class News1(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__lte=5)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__lte=5)
 
         else:
             news_list = News.objects.filter(news_hype_rate__lte=5)
@@ -50,6 +50,7 @@ class News1(generic.ListView):
             'news_site/news_list.html',
             {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
+             'same_news': SameNews.objects.all(),
              },
         )
 
@@ -69,7 +70,7 @@ class News2(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(6, 20))
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(6, 20))
 
         else:
             news_list = News.objects.filter(news_hype_rate__range=(6, 20))
@@ -97,7 +98,7 @@ class News3(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(21, 100))
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(21, 100))
 
         else:
             news_list = News.objects.filter(news_hype_rate__range=(21, 100))
@@ -125,7 +126,7 @@ class News4(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(101, 200))
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(101, 200))
 
         else:
             news_list = News.objects.filter(news_hype_rate__range=(101, 200))
@@ -153,7 +154,7 @@ class News5(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__range=(201, 1000))
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(201, 1000))
 
         else:
             news_list = News.objects.filter(news_hype_rate__range=(201, 1000))
@@ -181,7 +182,7 @@ class News6(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__gt=1000)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__gt=1000)
 
         else:
             news_list = News.objects.filter(news_hype_rate__gt=1000)
@@ -209,7 +210,7 @@ class News7(generic.ListView):
                 id__in=id_request
             ).values_list("url", flat=True)
 
-            news_list = News.objects.filter(site_url__in=list(user_urls_values), news_hype_rate__gt=500)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__gt=500)
 
         else:
             news_list = News.objects.filter(news_hype_rate__gt=500)

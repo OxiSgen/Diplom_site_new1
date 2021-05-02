@@ -1,16 +1,15 @@
 from celery.schedules import crontab
 from celery import Celery
 from .modules.rss_parser import main as Pars
-from .models import News, CustomUser, UrlsTable
+from .models import News, CustomUser, UrlsTable, SameNews
 from celery import shared_task
 from celery.schedules import crontab
 from dateutil.parser import parse
+from dateutil import tz
+from fuzzywuzzy import fuzz
 
 
 from django_celery_beat.models import PeriodicTask, PeriodicTasks, IntervalSchedule
-
-
-# celery_app = Celery('mysite')
 
 
 '''schedule, created = IntervalSchedule.objects.get_or_create(
@@ -22,26 +21,43 @@ from django_celery_beat.models import PeriodicTask, PeriodicTasks, IntervalSched
 PeriodicTask.objects.create(
     interval=schedule,                  # Рассписание, определённое выше
     name='News_parsing',          # Описание задачи
-    task='tests.test',  # Имя задачи
+    task='test',  # Имя задачи
 )'''
-
-
-'''
-@celery_app.on_after_finalize.connect
-def setup_periodic_tasks(sender, **kwargs):
-    print('lol')
-    # Calls test() every 100 seconds.
-    sender.add_periodic_task(100.0, test.s(), name='add-every-10-seconds')
-'''
 
 
 @shared_task(name="test")
 def test():
-    print('lol')
     '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    print(urls)
     for url in urls:
         for n in Pars(url):
-            # tzinfo=tz.gettz('America/New_York')  ???
-            date = parse(n[2]).strftime("%Y-%m-%d %H:%M:%S")
-            s = News(news_text=n[0], news_url=n[1], news_hype_rate=0, pub_date=date, site_url=url)
+            # MZ = tz.gettz('Europe/Moscow')
+            # date = parse(n[2]).strftime("%Y-%m-%d %H:%M:%S")
+            s = News(news_text=n[0],
+                     news_url=n[1],
+                     news_hype_rate=0,
+                     pub_date=n[2],
+                     site_url=UrlsTable.objects.get(url__exact=url)
+                     )
             s.save()'''
+    # News.objects.all().delete()
+    '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
+        for y, str2 in enumerate(News.objects.all()):
+            if str != str2:
+                if fuzz.token_set_ratio(str, str2) > 59:
+                    n = News.objects.get(news_text=str)
+                    e = n.samenews_set.create(
+                        news_text=News.objects.get(news_text=str2).news_text,
+                        news_url=News.objects.get(news_text=str2).news_url,
+                        site_url=News.objects.get(news_text=str2).site_url,
+                        news_hype_rate=News.objects.get(news_text=str2).news_hype_rate,
+                        pub_date=News.objects.get(news_text=str2).pub_date,
+                    )
+            else:
+                continue'''
+
+                # if sites[str[1]] > sites[str2[1]]:
+                    # del str_list[x]
+                # else:
+                    # del str_list[y]
+                # print(x, y, fuzz.token_set_ratio(str[0], str2[0]), str[0], str[1], '-/-', str2[0], str2[1])

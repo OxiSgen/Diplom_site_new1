@@ -7,8 +7,8 @@ from django_celery_beat.models import PeriodicTask
 
 
 class UrlsTable(models.Model):
-    url = models.CharField(max_length=200, null=True, blank=True)
-    site_name = models.CharField(max_length=200, null=True, blank=True)
+    url = models.CharField(max_length=200, null=False, blank=False)
+    site_name = models.CharField(max_length=200, null=False, blank=False)
 
     def __str__(self):
         return self.url
@@ -30,9 +30,25 @@ class News(models.Model):
     id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     news_text = models.CharField(max_length=200, blank=True, null=True)
     news_url = models.CharField(max_length=200, blank=True, null=True)
-    site_url = models.CharField(max_length=200, blank=True, null=True)
+    site_url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE, blank=True, null=True)
     news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
     pub_date = models.DateTimeField(blank=True, null=True)
 
-    def __str__(self):
-        return self.news_text
+    def same_news_print(self):
+        return SameNews.objects.filter(child_news__id=self.id)
+
+    class Meta:
+        ordering = ["news_text"]
+
+
+class SameNews(models.Model):
+    id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    news_text = models.CharField(max_length=200, blank=True, null=True)
+    news_url = models.CharField(max_length=200, blank=True, null=True)
+    site_url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE, blank=True, null=True)
+    news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
+    pub_date = models.DateTimeField(blank=True, null=True)
+    child_news = models.ForeignKey(News, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ["news_text"]

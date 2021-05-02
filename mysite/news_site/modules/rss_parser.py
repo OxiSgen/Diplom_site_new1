@@ -4,6 +4,7 @@ import requests
 import json
 import re
 import urllib.parse as urlparse
+from dateutil.parser import parse
 import feedparser
 # from Hype_Rate import *
 
@@ -64,7 +65,7 @@ def rss_feeds_urls(url):
                 rss_feeds[i] = urlparse.urljoin(url, feed)
         return rss_feeds
     except BaseException:
-        print('У данного новостного ресурса нет RSS ленты. Возможно её не удалось обнаружить.')
+        # print('У данного новостного ресурса нет RSS ленты. Возможно её не удалось обнаружить.')
         raise MyException()
 
 
@@ -98,7 +99,7 @@ def rss_feedparser(rss_url):
     feed = []
     d = feedparser.parse(rss_url).entries
     for i in d:
-        feed.append([i.title, i.link, i.published])
+        feed.append([i.title, i.link, parse(i.published).strftime("%Y-%m-%d %H:%M:%S")])
         '''
         print(i.title)  # Заголовок
         print(i.link)  # Ссылка
