@@ -39,9 +39,9 @@ def test():
                      pub_date=n[2],
                      site_url=UrlsTable.objects.get(url__exact=url)
                      )
-            s.save()'''
-    # News.objects.all().delete()
-    '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
+            s.save()
+
+    for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
         for y, str2 in enumerate(News.objects.all()):
             if str != str2:
                 if fuzz.token_set_ratio(str, str2) > 59:

@@ -29,12 +29,14 @@
                       <small class="text-muted">News_hype: {{ news.news_hype_rate }}</small>
                     </div>
                     <small class="text-muted">В других новостных источниках: <br></small>
-                    <a class="card-text" href="{{ news.same_news.news_url }}"> {{ new.same_news.news_text }}</a>
-                    <small class="text-muted"> {{ new.same_news.pub_date }} {{ new.same_news.site_url.site_name }} <br></small>
+                    {% for new in news.same_news %}
+                      <a class="card-text" href="{{ new.news_url }}"> {{ new.news_text }}</a>
+                      <small class="text-muted"> {{ new.pub_date }} {{ new.site_url.site_name }} <br></small>
                     {% endfor %}
                   </div>
                 </div>
               </div>
+          {% endfor %}
             <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
             <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
             <script src="{% static 'js/infinite.min.js' %}"></script>
