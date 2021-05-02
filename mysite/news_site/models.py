@@ -33,22 +33,10 @@ class News(models.Model):
     site_url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE, blank=True, null=True)
     news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
     pub_date = models.DateTimeField(blank=True, null=True)
+    same_news = models.ManyToManyField('self')
 
     def same_news_print(self):
-        return SameNews.objects.filter(child_news__id=self.id)
-
-    class Meta:
-        ordering = ["news_text"]
-
-
-class SameNews(models.Model):
-    id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
-    news_text = models.CharField(max_length=200, blank=True, null=True)
-    news_url = models.CharField(max_length=200, blank=True, null=True)
-    site_url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE, blank=True, null=True)
-    news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
-    pub_date = models.DateTimeField(blank=True, null=True)
-    child_news = models.ForeignKey(News, on_delete=models.CASCADE)
+        return self.objects.filter(child_news__id=self.id)
 
     class Meta:
         ordering = ["news_text"]

@@ -1,7 +1,7 @@
 from celery.schedules import crontab
 from celery import Celery
 from .modules.rss_parser import main as Pars
-from .models import News, CustomUser, UrlsTable, SameNews
+from .models import News, CustomUser, UrlsTable
 from celery import shared_task
 from celery.schedules import crontab
 from dateutil.parser import parse
@@ -46,7 +46,7 @@ def test():
             if str != str2:
                 if fuzz.token_set_ratio(str, str2) > 59:
                     n = News.objects.get(news_text=str)
-                    e = n.samenews_set.create(
+                    s = n.samenews_set.create(
                         news_text=News.objects.get(news_text=str2).news_text,
                         news_url=News.objects.get(news_text=str2).news_url,
                         site_url=News.objects.get(news_text=str2).site_url,
