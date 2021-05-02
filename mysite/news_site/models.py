@@ -36,4 +36,4 @@ class News(models.Model):
     same_news = models.ManyToManyField('self', verbose_name="Same News")  # symmetrical=False для того, чтобы убрать симметрию.
 
     class Meta:
-        ordering = ["news_text"]
+        ordering = ["pub_date"]
