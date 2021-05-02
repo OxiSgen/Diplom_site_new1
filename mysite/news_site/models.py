@@ -33,10 +33,7 @@ class News(models.Model):
     site_url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE, blank=True, null=True)
     news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
     pub_date = models.DateTimeField(blank=True, null=True)
-    same_news = models.ManyToManyField('self')
-
-    def same_news_print(self):
-        return self.objects.filter(child_news__id=self.id)
+    same_news = models.ManyToManyField('self', verbose_name="Same News")  # symmetrical=False для того, чтобы убрать симметрию.
 
     class Meta:
         ordering = ["news_text"]

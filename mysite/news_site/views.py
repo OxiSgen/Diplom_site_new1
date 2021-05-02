@@ -2,7 +2,7 @@ import requests
 from django.shortcuts import render
 from django.views import generic
 
-from .models import News, UrlsTable, PriorityForUser, CustomUser, SameNews
+from .models import News, UrlsTable, PriorityForUser, CustomUser
 from django_celery_beat.models import PeriodicTask
 
 from .charts import DemoChart
@@ -50,7 +50,6 @@ class News1(generic.ListView):
             'news_site/news_list.html',
             {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
-             'same_news': SameNews.objects.all(),
              },
         )
 

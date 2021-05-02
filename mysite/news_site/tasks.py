@@ -45,14 +45,7 @@ def test():
         for y, str2 in enumerate(News.objects.all()):
             if str != str2:
                 if fuzz.token_set_ratio(str, str2) > 59:
-                    n = News.objects.get(news_text=str)
-                    s = n.samenews_set.create(
-                        news_text=News.objects.get(news_text=str2).news_text,
-                        news_url=News.objects.get(news_text=str2).news_url,
-                        site_url=News.objects.get(news_text=str2).site_url,
-                        news_hype_rate=News.objects.get(news_text=str2).news_hype_rate,
-                        pub_date=News.objects.get(news_text=str2).pub_date,
-                    )
+                    News.objects.get(news_text=str).news_set.add(News.objects.get(news_text=str2))
             else:
                 continue'''
 
