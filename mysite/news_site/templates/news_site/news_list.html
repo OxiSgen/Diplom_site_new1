@@ -10,16 +10,27 @@
             {% for news in object_list %}
               <div class="col">
                 <div class="card shadow-sm" id="block">
-                  <svg class="bd-placeholder-img card-img-top" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid slice" focusable="false">
-                    <style>
-                     .example {
-                      font-family: "Courier New", Courier, monospace;
-                      white-space: pre;
-                     }
-                    </style>
-                    <rect width="100%" height="100%" fill="#55595c"></rect>
-                    <text dx="70%" y="90%" fill="#eceeef" dy=".3em" class="example"> {{ news.site_url.site_name }}</text>
-                  </svg>
+                  {% if news.image_url %}
+                    <img class="card-img-top img-fluid" src="{{ news.image_url }}" >
+                      <style>
+                       .example {
+                        font-family: "Courier New", Courier, monospace;
+                        white-space: pre;
+                       }
+                      </style>
+                      <text x="50%" y="50%" fill="#eceeef" dy=".3em" class="example"> {{ news.site_url.site_name }}</text>
+                    </img>
+                  {% else %}
+                    <img class="card-img-top img-fluid" src="{% static 'img/placeholder.jpg' %}">
+                        <style>
+                         .example {
+                          font-family: "Courier New", Courier, monospace;
+                          white-space: pre;
+                         }
+                        </style>
+                        <text x="50%" y="50%" fill="#eceeef" dy=".3em" class="example"> {{ news.site_url.site_name }}</text>
+                    </img>
+                  {% endif %}
                   <div class="card-body">
                     <a class="card-text" href="{{ news.news_url }}"> {{ news.news_text }}</a>
                     <div class="d-flex justify-content-between align-items-center">
@@ -32,6 +43,7 @@
                     {% for same_news in news.same_news.all %}
                       <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
                       <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
+                      <hr>
                     {% endfor %}
                   </div>
                 </div>
