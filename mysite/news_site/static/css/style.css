@@ -28,13 +28,27 @@
 }
 
 #block {
-    height: 1500px;
+    height: 500px;
     border-bottom: 3px solid #BFE2FF;
 }
 
 .btn-group {
     border-bottom: 2px solid rgba(0,0,0,0.4);
     padding-bottom: 5px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 50%;
+    object-fit: cover;
+}
+
+#infinite-item {
+   margin-top: 3%;
+}
+
+#top-panel {
+
 }
 
 /* Оформление панели */
