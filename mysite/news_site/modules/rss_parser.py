@@ -100,6 +100,7 @@ def rss_feedparser(rss_url):
     d = feedparser.parse(rss_url).entries
     for i in d:
         feed.append([i.title, i.link, parse(i.published).strftime("%Y-%m-%d %H:%M:%S")])
+        # feed.append([i.title, i.link, parse(i.published)])
         '''
         print(i.title)  # Заголовок
         print(i.link)  # Ссылка
