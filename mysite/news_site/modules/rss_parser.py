@@ -93,14 +93,16 @@ def rss_text(rss_feed):
         # запускаем поиск rss канала на этой странице
         # (актуально для сайтов типо Дождя и 3Dnews)
 
-
+        
 def rss_feedparser(rss_url):
     # Парсим RSS канал с помощью библиотеки feedparser
     feed = []
     d = feedparser.parse(rss_url).entries
     for i in d:
-        feed.append([i.title, i.link, parse(i.published).strftime("%Y-%m-%d %H:%M:%S")])
-        # feed.append([i.title, i.link, parse(i.published)])
+        try:
+            feed.append([i.title, i.link, parse(i.published), i.enclosures[0].href])
+        except:
+            feed.append([i.title, i.link, parse(i.published), ''])
         '''
         print(i.title)  # Заголовок
         print(i.link)  # Ссылка
