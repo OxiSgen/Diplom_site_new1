@@ -25,62 +25,42 @@ PeriodicTask.objects.create(
 )'''
 
 
+def f(li):
+    temp = {i[0]: i[1:] for i in li}
+    print(temp)
+    print(temp)
+    arr = []
+    for key, value in temp.items():
+        value.insert(0, key)
+        arr.append(value)
+    return arr
+
+
 @shared_task(name="test")
 def test():
     '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
     print(urls)
     for url in urls:
-        for n in Pars(url):
-            # MZ = tz.gettz('Europe/Moscow')
-            # date = parse(n[2]).strftime("%Y-%m-%d %H:%M:%S")
-            s = News(news_text=n[0],
-                     news_url=n[1],
-                     news_hype_rate=0,
-                     pub_date=n[2],
-                     site_url=UrlsTable.objects.get(url__exact=url)
-                     )
-            s.save()
+        for n in f(Pars(url)):
+            if int("{:%s}".format(datetime.datetime.now(pytz.timezone('Europe/Moscow')))) - int("{:%s}".format(n[2])) < 604800:
+                try:
+                    s = News(news_text=n[0],
+                             news_url=n[1],
+                             news_hype_rate=0,
+                             pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
+                             site_url=UrlsTable.objects.get(url__exact=url),
+                             image_url=n[3],
+                             )
+                    s.save()
+                except IntegrityError:
+                    pass'''
 
-    for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
-        for y, str2 in enumerate(News.objects.all()):
-            if str != str2:
-                if fuzz.token_set_ratio(str, str2) > 59:
-                    News.objects.get(news_text=str).news_set.add(News.objects.get(news_text=str2))
-            else:
-                continue'''
-
-                # if sites[str[1]] > sites[str2[1]]:
-                    # del str_list[x]
-                # else:
-                    # del str_list[y]
-                # print(x, y, fuzz.token_set_ratio(str[0], str2[0]), str[0], str[1], '-/-', str2[0], str2[1])
-                
-                
-                
-                
-                
-         urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
-    print(urls)
-    for url in urls:
-        for n in Pars(url):
-            print(int("{:%s}".format(datetime.datetime.now(pytz.timezone('Europe/Moscow')))))
-            print(int("{:%s}".format(n[2])))
-
-            s = News(news_text=n[0],
-                     news_url=n[1],
-                     news_hype_rate=0,
-                     pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
-                     site_url=UrlsTable.objects.get(url__exact=url)
-                     )
-            s.save()
-
-    '''for x, str in enumerate(News.objects.all().values_list("news_text", "site_url")):
-        for y, str2 in enumerate(News.objects.all().values_list("news_text", "site_url")):
-            print(str)
-            if str != str2:
+    '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
+        for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
+            if x != y:
                 if fuzz.token_set_ratio(str, str2) > 59:
                     n = News.objects.get(news_text=str)
                     n.same_news.add(News.objects.get(news_text=str2))
                     News.save(n)
             else:
-                continue'''           
+                continue'''       
