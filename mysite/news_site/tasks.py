@@ -54,3 +54,33 @@ def test():
                 # else:
                     # del str_list[y]
                 # print(x, y, fuzz.token_set_ratio(str[0], str2[0]), str[0], str[1], '-/-', str2[0], str2[1])
+                
+                
+                
+                
+                
+         urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    print(urls)
+    for url in urls:
+        for n in Pars(url):
+            print(int("{:%s}".format(datetime.datetime.now(pytz.timezone('Europe/Moscow')))))
+            print(int("{:%s}".format(n[2])))
+
+            s = News(news_text=n[0],
+                     news_url=n[1],
+                     news_hype_rate=0,
+                     pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
+                     site_url=UrlsTable.objects.get(url__exact=url)
+                     )
+            s.save()
+
+    '''for x, str in enumerate(News.objects.all().values_list("news_text", "site_url")):
+        for y, str2 in enumerate(News.objects.all().values_list("news_text", "site_url")):
+            print(str)
+            if str != str2:
+                if fuzz.token_set_ratio(str, str2) > 59:
+                    n = News.objects.get(news_text=str)
+                    n.same_news.add(News.objects.get(news_text=str2))
+                    News.save(n)
+            else:
+                continue'''           
