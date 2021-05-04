@@ -25,10 +25,21 @@ PeriodicTask.objects.create(
 )'''
 
 
+import fasttext
+
+
+class CategoryChecker:
+    def __init__(self):
+        self.model = fasttext.load_model('news_site/news_categorization_model/ru_cat_v5.ftz')
+
+    def determine_category(self, text):
+        label_tuple = self.model.predict(text)
+        prediction = label_tuple[0][0].replace('__label__', '')
+        return prediction
+
+
 def f(li):
     temp = {i[0]: i[1:] for i in li}
-    print(temp)
-    print(temp)
     arr = []
     for key, value in temp.items():
         value.insert(0, key)
@@ -38,13 +49,15 @@ def f(li):
 
 @shared_task(name="test")
 def test():
-    '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
-    print(urls)
+    urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    ch = CategoryChecker()
     for url in urls:
         for n in f(Pars(url)):
-            if int("{:%s}".format(datetime.datetime.now(pytz.timezone('Europe/Moscow')))) - int("{:%s}".format(n[2])) < 604800:
+            if int("{:%s}".format(datetime.datetime.now(pytz.timezone('Europe/Moscow')))) - int("{:%s}".format(n[2])) < 1209600:
+                #  print(n[0], ch.determine_category(n[0]))
                 try:
-                    s = News(news_text=n[0],
+                    str = n[0]
+                    s = News(news_text=str,
                              news_url=n[1],
                              news_hype_rate=0,
                              pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
@@ -52,8 +65,16 @@ def test():
                              image_url=n[3],
                              )
                     s.save()
+                    print(s)
+                    for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
+                        if y == 0:
+                            continue
+                        if fuzz.token_set_ratio(str, str2) > 59:
+                            n = News.objects.get(news_text=str)
+                            n.same_news.add(News.objects.get(news_text=str2))
+                            News.save(n)
                 except IntegrityError:
-                    pass'''
+                    pass
 
     '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
         for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
