@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, News, UrlsTable, PriorityForUser
+from .models import CustomUser, News, UrlsTable, Category, UrlsForCategory
 
 # Register your models here.
 
@@ -18,4 +18,5 @@ admin.site.register(CustomUser, CustomUserAdmin)
 
 admin.site.register(News)
 admin.site.register(UrlsTable)
-admin.site.register(PriorityForUser)
+admin.site.register(UrlsForCategory)
+admin.site.register(Category)
