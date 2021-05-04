@@ -8,7 +8,7 @@
 <h2>Выберите желательные новостные ресурсы</h2>
 Сайты и их приоритеты для пользователя:
 {% for url in user_urls %}
-  {{ url.url }} - {{ url.prior }};
+  category: {{ url.category.category }} {{ url.url }} - {{ url.prior }};
 {% endfor %}
 
 
