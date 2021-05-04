@@ -4,6 +4,8 @@ from django_celery_beat.models import PeriodicTask
 
 
 # Create your models here.
+class Category(models.Model):
+    category = models.CharField(max_length=45, null=False, blank=False)
 
 
 class UrlsTable(models.Model):
@@ -17,12 +19,27 @@ class UrlsTable(models.Model):
 class CustomUser(AbstractUser):
     text = models.CharField(max_length=2000, null=True, blank=True)
     # task = models.ManyToManyField(PeriodicTask)
-    urls = models.ManyToManyField(UrlsTable, through='PriorityForUser')
+    '''urls = models.ManyToManyField(UrlsTable, through='PriorityForUser')
+    categories = models.ManyToManyField(Category, through='CategoryForUser')'''
 
 
-class PriorityForUser(models.Model):
+
+'''class PriorityForUser(models.Model):
     url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    prior = models.IntegerField(blank=True, null=True)
+
+
+class CategoryForUser(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    # urls = models.ManyToManyField(PriorityForUser, through='UrlsForCategory')'''
+    
+
+class UrlsForCategory(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE)
     prior = models.IntegerField(blank=True, null=True)
 
 
@@ -35,6 +52,7 @@ class News(models.Model):
     news_hype_rate = models.PositiveSmallIntegerField(blank=True, null=True)
     pub_date = models.DateTimeField(blank=True, null=True)
     same_news = models.ManyToManyField('self', verbose_name="Same News", symmetrical=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     # symmetrical=False для того, чтобы убрать симметрию.
 
     class Meta:
