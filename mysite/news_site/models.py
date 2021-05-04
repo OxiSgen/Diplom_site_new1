@@ -38,4 +38,4 @@ class News(models.Model):
     # symmetrical=False для того, чтобы убрать симметрию.
 
     class Meta:
-        ordering = ["pub_date"]
+        ordering = ["-pub_date"]
