@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.8.5-alpine
+FROM ubuntu:20.04
 
 # set work directory
 WORKDIR /usr/src/app
@@ -9,13 +9,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN pip install --upgrade pip
+
+RUN apt-get update && apt-get install -y \
+    python3-pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
-RUN apk add --no-cache --virtual .build-deps gcc libc-dev libxslt-dev && \
-    apk add --no-cache libxslt && \
-    pip install --no-cache-dir lxml>=4.6.3 && \
-    apk del .build-deps
-RUN pip install -r requirements.txt
+# RUN apt-get --no-cache --virtual .build-deps gcc libc-dev libxslt-dev && \
+#     apt-get --no-cache libxslt && \
+#     pip install --no-cache-dir lxml>=4.6.3 && \
+#     apt-del .build-deps
+RUN pip3 install -r requirements.txt
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
