@@ -33,9 +33,7 @@ class News1(generic.ListView):
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-            print(user_urls_values)
             news_list = News.objects.filter(site_url__url__in=list(user_urls_values), category__category__exact='Политика')
-            print(news_list)
         else:
             news_list = News.objects.filter(category__category__exact='Политика')
 

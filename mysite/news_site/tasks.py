@@ -27,6 +27,7 @@ PeriodicTask.objects.create(
     task='test',  # Имя задачи
 )'''
 
+
 cat_to_cat_transform = {
     'society': 'Политика',
     'economy': 'Экономика',
@@ -78,7 +79,6 @@ def test():
                              category=Category.objects.get(category__exact=cat_to_cat_transform[category])
                              )
                     s.save()
-                    print(s)
                     for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
                         if str == str2:
                             continue

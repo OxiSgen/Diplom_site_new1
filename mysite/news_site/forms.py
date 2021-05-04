@@ -10,7 +10,7 @@ class NewsIndividual(forms.Form):
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, PriorityForUser, UrlsTable
+from .models import CustomUser, UrlsTable
 
 
 class CustomUserCreationForm(UserCreationForm):
