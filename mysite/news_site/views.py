@@ -2,7 +2,7 @@ import requests
 from django.shortcuts import render
 from django.views import generic
 
-from .models import News, UrlsTable, PriorityForUser, CustomUser
+from .models import News, UrlsTable, CustomUser, UrlsForCategory
 from django_celery_beat.models import PeriodicTask
 
 from .charts import DemoChart
@@ -14,28 +14,30 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+
 import pickle
 
 user_interest = []
 
 
 class News1(generic.ListView):
+    news = News
 
     def get(self, request):
         num_visits1 = request.session.get('num_visits1', 0)
         request.session['num_visits1'] = num_visits1 + 1
         request.session.save()
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=1)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__lte=5)
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), category__category__exact='Политика')
+            print(news_list)
         else:
-            news_list = News.objects.filter(news_hype_rate__lte=5)
+            news_list = News.objects.filter(category__category__exact='Политика')
 
         page = request.GET.get('page', 1)
         paginator = Paginator(news_list, 18)
@@ -63,20 +65,29 @@ class News2(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=2)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(6, 20))
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Экономика')
         else:
-            news_list = News.objects.filter(news_hype_rate__range=(6, 20))
+            news_list = News.objects.filter(category__category__exact='Экономика')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -91,20 +102,29 @@ class News3(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=3)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(21, 100))
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Техника')
         else:
-            news_list = News.objects.filter(news_hype_rate__range=(21, 100))
+            news_list = News.objects.filter(category__category__exact='Техника')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -119,20 +139,29 @@ class News4(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=4)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(101, 200))
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Наука')
         else:
-            news_list = News.objects.filter(news_hype_rate__range=(101, 200))
+            news_list = News.objects.filter(category__category__exact='Наука')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -147,20 +176,29 @@ class News5(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=5)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__range=(201, 1000))
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Спорт')
         else:
-            news_list = News.objects.filter(news_hype_rate__range=(201, 1000))
+            news_list = News.objects.filter(category__category__exact='Спорт')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -175,20 +213,29 @@ class News6(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=6)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__gt=1000)
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Развлечения')
         else:
-            news_list = News.objects.filter(news_hype_rate__gt=1000)
+            news_list = News.objects.filter(category__category__exact='Развлечения')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -203,20 +250,29 @@ class News7(generic.ListView):
         request.session.save()
 
         if request.user.is_authenticated:
-            user_urls_id = PriorityForUser.objects.all().filter(user=self.request.user)
-            id_request = [url for url in user_urls_id.values_list("url", flat=True)]
+            user_category = UrlsForCategory.objects.all().filter(user=self.request.user, category=7)
+            id_request = [url for url in user_category.values_list("url", flat=True)]
             user_urls_values = UrlsTable.objects.all().filter(
                 id__in=id_request
             ).values_list("url", flat=True)
-
-            news_list = News.objects.filter(site_url__url__in=list(user_urls_values), news_hype_rate__gt=500)
-
+            print(user_urls_values)
+            news_list = News.objects.filter(site_url__url__in=list(user_urls_values),
+                                            category__category__exact='Прочее')
         else:
-            news_list = News.objects.filter(news_hype_rate__gt=500)
+            news_list = News.objects.filter(category__category__exact='Прочее')
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(news_list, 18)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
         return render(
             request,
             'news_site/news_list.html',
-            {'object_list': news_list,
+            {'object_list': numbers,
              'urls': UrlsTable.objects.all(),
              },
         )
@@ -243,15 +299,11 @@ class NewsIndividual(generic.TemplateView):
         return context
 
 
-class Unregistered(generic.TemplateView):
-    template_name = 'news_site/unregistered.html'
-
-
 class UserProfile(generic.TemplateView):
     template_name = 'news_site/profile.html'
 
     def get_context_data(self, **kwargs):
-        user_urls = PriorityForUser.objects.all().filter(user=self.request.user)
+        user_urls = UrlsForCategory.objects.all().filter(user=self.request.user)
         if self.request.method == 'POST':
             if "save" in self.request.POST:
                 pass
@@ -263,10 +315,20 @@ class UserProfile(generic.TemplateView):
                     url for url in user_urls.values_list("url", flat=True)
                 ]
             })
+            form1 = UserProfileForm(initial={
+                'all_urls': [
+                    url for url in user_urls.values_list("url", flat=True)
+                ]
+            })
 
         context = {
             'user_urls': user_urls,
             'urls': UrlsTable.objects.all(),
             'form': form,
+            'form1': form1,
         }
         return context
+
+
+class Unregistered(generic.TemplateView):
+    template_name = 'news_site/unregistered.html'
