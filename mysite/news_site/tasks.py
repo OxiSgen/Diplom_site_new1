@@ -1,13 +1,16 @@
 from celery.schedules import crontab
 from celery import Celery
 from .modules.rss_parser import main as Pars
-from .models import News, CustomUser, UrlsTable
+from .models import News, CustomUser, UrlsTable, Category
 from celery import shared_task
 from celery.schedules import crontab
 from dateutil.parser import parse
 from dateutil import tz
 from fuzzywuzzy import fuzz
-
+import datetime
+import pytz
+from django.db import IntegrityError
+import fasttext
 
 from django_celery_beat.models import PeriodicTask, PeriodicTasks, IntervalSchedule
 
@@ -24,8 +27,16 @@ PeriodicTask.objects.create(
     task='test',  # Имя задачи
 )'''
 
-
-import fasttext
+cat_to_cat_transform = {
+    'society': 'Политика',
+    'economy': 'Экономика',
+    'technology': 'Техника',
+    'science': 'Наука',
+    'sports': 'Спорт',
+    'entertainment': 'Развлечения',
+    'other': 'Прочее',
+    'not_news': 'Прочее',
+}
 
 
 class CategoryChecker:
@@ -49,7 +60,7 @@ def f(li):
 
 @shared_task(name="test")
 def test():
-    urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
     ch = CategoryChecker()
     for url in urls:
         for n in f(Pars(url)):
@@ -57,24 +68,26 @@ def test():
                 #  print(n[0], ch.determine_category(n[0]))
                 try:
                     str = n[0]
+                    category = ch.determine_category(n[0])
                     s = News(news_text=str,
                              news_url=n[1],
                              news_hype_rate=0,
                              pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
                              site_url=UrlsTable.objects.get(url__exact=url),
                              image_url=n[3],
+                             category=Category.objects.get(category__exact=cat_to_cat_transform[category])
                              )
                     s.save()
                     print(s)
                     for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
-                        if y == 0:
+                        if str == str2:
                             continue
                         if fuzz.token_set_ratio(str, str2) > 59:
                             n = News.objects.get(news_text=str)
                             n.same_news.add(News.objects.get(news_text=str2))
                             News.save(n)
                 except IntegrityError:
-                    pass
+                    continue'''
 
     '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
         for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
