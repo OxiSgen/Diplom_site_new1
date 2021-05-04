@@ -19,6 +19,7 @@ django-crispy-forms = "*"
 python-dateutil = "*"
 django-feed-reader = "*"
 fuzzywuzzy = "*"
+fasttext = "*"
 
 [dev-packages]
 
