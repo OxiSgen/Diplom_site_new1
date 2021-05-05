@@ -42,6 +42,9 @@ class UrlsForCategory(models.Model):
     url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE)
     prior = models.IntegerField(blank=True, null=True, default=999)
 
+    class Meta:
+        ordering = ["prior"]
+
 
 class News(models.Model):
     id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
@@ -53,7 +56,7 @@ class News(models.Model):
     pub_date = models.DateTimeField(blank=True, null=True)
     same_news = models.ManyToManyField('self', verbose_name="Same News", symmetrical=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
-    # symmetrical=False для того, чтобы убрать симметрию.
+    # symmetrical=False для того, чтобы убрать симметрию
 
     class Meta:
         ordering = ["-pub_date"]

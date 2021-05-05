@@ -17,7 +17,10 @@ from django.contrib.auth.decorators import login_required
 
 import pickle
 
+MAX_NEWS_PER_PAGE = 200
+
 user_interest = []
+
 
 def base_view(request, category, category_number, view):
     num_visits = request.session.get(view, 0)
@@ -26,15 +29,22 @@ def base_view(request, category, category_number, view):
     if request.user.is_authenticated:
         user_category = UrlsForCategory.objects.all().filter(user=request.user, category=category_number)
         id_request = [url for url in user_category.values_list("url", flat=True)]
-        user_urls_values = UrlsTable.objects.all().filter(
-            id__in=id_request
-        ).values_list("url", flat=True)
-        news_list = News.objects.filter(site_url__url__in=list(user_urls_values), category__category__exact=category)
+        user_urls_values = list(UrlsTable.objects.all().filter(id__in=id_request).values_list("url", flat=True))
+        uuv = [user_urls_values[i - 1] for i in id_request]
+        news_list = News.objects.filter(
+            site_url__url__in=user_urls_values,
+            category__category__exact=category
+        )
     else:
-        news_list = News.objects.filter(category__category__exact=category)
+        news_list = News.objects.filter(
+            category__category__exact=category
+        )
         user_urls_values = UrlsTable.objects.all()
+        uuv = user_urls_values
 
-    print(user_urls_values)
+
+    # order_list = {obj.pk: obj for obj in news_list.site_url.url}
+    # objects_ordered = [order_list[pk] for pk in uuv]
 
     page = request.GET.get('page', 1)
     paginator = Paginator(news_list, 18)
