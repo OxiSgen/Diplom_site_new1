@@ -61,7 +61,7 @@ def f(li):
 
 @shared_task(name="test")
 def test():
-    urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
+    '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
     ch = CategoryChecker()
     for url in urls:
         for n in f(Pars(url)):
@@ -87,7 +87,7 @@ def test():
                             n.same_news.add(News.objects.get(news_text=str2))
                             News.save(n)
                 except IntegrityError:
-                    continue
+                    continue'''
 
     '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
         for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):

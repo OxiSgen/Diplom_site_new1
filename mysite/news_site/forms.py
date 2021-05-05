@@ -28,9 +28,10 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class UserProfileForm(forms.Form):
-    all_urls = forms.ModelMultipleChoiceField(
+    ordering = forms.CharField()
+    '''all_urls = forms.ModelMultipleChoiceField(
         queryset=UrlsTable.objects.all().order_by('url'),
         widget=forms.CheckboxSelectMultiple,
         label="",
         label_suffix='',
-    )
+    )'''

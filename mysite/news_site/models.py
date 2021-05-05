@@ -40,7 +40,7 @@ class UrlsForCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE)
-    prior = models.IntegerField(blank=True, null=True)
+    prior = models.IntegerField(blank=True, null=True, default=999)
 
 
 class News(models.Model):

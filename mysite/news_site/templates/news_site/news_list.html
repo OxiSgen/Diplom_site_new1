@@ -40,9 +40,11 @@
                     </div>
                     <small class="text-muted">В других новостных источниках: <br></small>
                     {% for same_news in news.same_news.all %}
+                      {% if same_news.site_url.url in urls_list %}
                       <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
                       <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
                       <hr>
+                      {% endif %}
                     {% endfor %}
                   </div>
                 </div>
