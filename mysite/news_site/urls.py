@@ -13,4 +13,5 @@ urlpatterns = [
     re_path(r'newsIndividual/', views.NewsIndividual.as_view(), name='NewsIndividual'),
     re_path(r'unregistered/', views.Unregistered.as_view(), name='Not_logged'),
     re_path(r'profile/', views.UserProfile.as_view(), name='Profile'),
+    re_path(r'register/', views.register, name='register'),
 ]

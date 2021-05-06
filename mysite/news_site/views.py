@@ -7,7 +7,7 @@ from django_celery_beat.models import PeriodicTask
 
 from .charts import DemoChart
 
-from .forms import UserProfileForm
+from .forms import UserProfileForm, UserRegistrationForm
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -30,7 +30,7 @@ def base_view(request, category, category_number, view):
         user_category = UrlsForCategory.objects.all().filter(user=request.user, category=category_number)
         id_request = [url for url in user_category.values_list("url", flat=True)]
         user_urls_values = list(UrlsTable.objects.all().filter(id__in=id_request).values_list("url", flat=True))
-        uuv = [user_urls_values[i - 1] for i in id_request]
+        # uuv = [user_urls_values[i - 1] for i in id_request]
         news_list = News.objects.filter(
             site_url__url__in=user_urls_values,
             category__category__exact=category
@@ -40,7 +40,7 @@ def base_view(request, category, category_number, view):
             category__category__exact=category
         )
         user_urls_values = UrlsTable.objects.all()
-        uuv = user_urls_values
+        # uuv = user_urls_values
 
 
     # order_list = {obj.pk: obj for obj in news_list.site_url.url}
@@ -174,3 +174,19 @@ class UserProfile(generic.TemplateView):
 
 class Unregistered(generic.TemplateView):
     template_name = 'news_site/unregistered.html'
+
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            return render(request, 'register_done.html', {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'register.html', {'user_form': user_form})
