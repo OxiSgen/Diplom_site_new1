@@ -59,6 +59,12 @@ def f(li):
     return arr
 
 
+@shared_task(name="clear_db")
+def delete_old_news():
+    News.objects.all().delete()
+    test()
+
+
 @shared_task(name="test")
 def test():
     '''urls = [url for url in UrlsTable.objects.all().values_list('url', flat=True)]
@@ -97,4 +103,4 @@ def test():
                     n.same_news.add(News.objects.get(news_text=str2))
                     News.save(n)
             else:
-                continue'''       
+                continue'''

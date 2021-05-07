@@ -11,6 +11,8 @@ from .forms import UserProfileForm, UserRegistrationForm
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+import numpy as np
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -22,32 +24,37 @@ MAX_NEWS_PER_PAGE = 200
 user_interest = []
 
 
-def base_view(request, category, category_number, view):
+def base_view(request, category, category_number, view, filter_string=''):
     num_visits = request.session.get(view, 0)
     request.session[view] = num_visits + 1
     request.session.save()
+    result = []
     if request.user.is_authenticated:
         user_category = UrlsForCategory.objects.all().filter(user=request.user, category=category_number)
         id_request = [url for url in user_category.values_list("url", flat=True)]
         user_urls_values = list(UrlsTable.objects.all().filter(id__in=id_request).values_list("url", flat=True))
-        # uuv = [user_urls_values[i - 1] for i in id_request]
         news_list = News.objects.filter(
             site_url__url__in=user_urls_values,
-            category__category__exact=category
+            category__category__exact=category,
+            news_text__icontains=filter_string
         )
+        if len(id_request) > 1:
+            uuv = [user_urls_values[i - min(id_request)] for i in id_request]
+            sortkey = {j: i for i, j in enumerate(uuv)}
+            split_arr = np.array_split(news_list, 50)
+            for arr in split_arr:
+                result += sorted(arr, key=lambda r: sortkey[r.site_url.url])
+            result = np.array(result).flatten()
+        else:
+            result = news_list
     else:
-        news_list = News.objects.filter(
+        result = News.objects.filter(
             category__category__exact=category
-        )
+        ).order_by('-pub_date')
         user_urls_values = UrlsTable.objects.all()
-        # uuv = user_urls_values
-
-
-    # order_list = {obj.pk: obj for obj in news_list.site_url.url}
-    # objects_ordered = [order_list[pk] for pk in uuv]
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(news_list, 18)
+    paginator = Paginator(result, 18)
     try:
         numbers = paginator.page(page)
     except PageNotAnInteger:
@@ -68,13 +75,22 @@ class News1(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Политика', 1, 'num_visits1')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Политика', 1, 'num_visits1', text)
+        except:
+            return base_view(request, 'Политика', 1, 'num_visits1')
 
 
 class News2(generic.ListView):
     news = News
 
     def get(self, request):
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Политика', 1, 'num_visits1', text)
+        except:
+            return base_view(request, 'Политика', 1, 'num_visits1')
         return base_view(request, 'Экономика', 2, 'num_visits2')
 
 
@@ -83,35 +99,60 @@ class News3(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Техника', 3, 'num_visits3')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Техника', 3, 'num_visits3', text)
+        except:
+            return base_view(request, 'Техника', 3, 'num_visits3')
+
 
 
 class News4(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Наука', 4, 'num_visits4')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Наука', 4, 'num_visits4', text)
+        except:
+            return base_view(request, 'Наука', 4, 'num_visits4')
+
 
 
 class News5(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Спорт', 5, 'num_visits5')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Спорт', 5, 'num_visits5', text)
+        except:
+            return base_view(request, 'Спорт', 5, 'num_visits5')
+
 
 
 class News6(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Развлечения', 6, 'num_visits6')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Развлечения', 6, 'num_visits6', text)
+        except:
+            return base_view(request, 'Развлечения', 6, 'num_visits6')
+
 
 
 class News7(generic.ListView):
     news = News
 
     def get(self, request):
-        return base_view(request, 'Прочее', 7, 'num_visits7')
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, 'Прочее', 7, 'num_visits7', text)
+        except:
+            return base_view(request, 'Прочее', 7, 'num_visits7')
+
 
 
 class NewsIndividual(generic.TemplateView):
@@ -119,6 +160,7 @@ class NewsIndividual(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         # context = super().get_context_data(**kwargs)
+
         num_visits8 = self.request.session.get('num_visits8', 0)
         self.request.session['num_visits8'] = num_visits8 + 1
         self.request.session.save()

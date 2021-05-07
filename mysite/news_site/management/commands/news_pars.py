@@ -3,7 +3,8 @@ from mysite.news_site.models import News
 
 
 def funk():
-    print("хуй")
+    print("---")
+
 class Command(BaseCommand):
     help = 'News_pars from url to db'
 
