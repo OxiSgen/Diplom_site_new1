@@ -11,6 +11,7 @@ import datetime
 import pytz
 from django.db import IntegrityError
 import fasttext
+from .modules.Hype_Rate import *
 
 from django_celery_beat.models import PeriodicTask, PeriodicTasks, IntervalSchedule
 
@@ -75,10 +76,17 @@ def test():
                 #  print(n[0], ch.determine_category(n[0]))
                 try:
                     str = n[0]
+                    if "ria.ru" in url:
+                        try:
+                            hype = sum(map(int, get_hype_rate_for_ria(n[1])))
+                        except:
+                            hype = 0
+                    else:
+                        hype = 0
                     category = ch.determine_category(n[0])
                     s = News(news_text=str,
                              news_url=n[1],
-                             news_hype_rate=0,
+                             news_hype_rate=hype,
                              pub_date=n[2].strftime("%Y-%m-%d %H:%M"),
                              site_url=UrlsTable.objects.get(url__exact=url),
                              image_url=n[3],
@@ -94,13 +102,3 @@ def test():
                             News.save(n)
                 except IntegrityError:
                     continue'''
-
-    '''for x, str in enumerate(News.objects.all().values_list("news_text", flat=True)):
-        for y, str2 in enumerate(News.objects.all().values_list("news_text", flat=True)):
-            if x != y:
-                if fuzz.token_set_ratio(str, str2) > 59:
-                    n = News.objects.get(news_text=str)
-                    n.same_news.add(News.objects.get(news_text=str2))
-                    News.save(n)
-            else:
-                continue'''

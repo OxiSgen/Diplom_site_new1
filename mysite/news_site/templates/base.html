@@ -50,13 +50,14 @@
         {% else %}
           <li><a href="{% url 'Not_logged' %}" class="nav-link px-2 link-secondary Individual-lenta">Персональная</a></li>
         {% endif %}
-        <li><a href="{% url 'News1' %}" class="nav-link px-2 link-dark">Общество</a></li>
-        <li><a href="{% url 'News2' %}" class="nav-link px-2 link-dark">Экономика</a></li>
-        <li><a href="{% url 'News3' %}" class="nav-link px-2 link-dark">Техника</a></li>
-        <li><a href="{% url 'News4' %}" class="nav-link px-2 link-dark">Наука</a></li>
-        <li><a href="{% url 'News5' %}" class="nav-link px-2 link-dark">Спорт</a></li>
-        <li><a href="{% url 'News6' %}" class="nav-link px-2 link-dark">Развлечения</a></li>
-        <li><a href="{% url 'News7' %}" class="nav-link px-2 link-dark">Прочее</a></li>
+        <li><a href="{% url 'News0' %}" class="nav-link px-2 link-dark Hot-News">Hot News</a></li>
+        <li><a href="{% url 'News1' %}" class="nav-link px-2 link-dark Def-News">Общество</a></li>
+        <li><a href="{% url 'News2' %}" class="nav-link px-2 link-dark Def-News">Экономика</a></li>
+        <li><a href="{% url 'News3' %}" class="nav-link px-2 link-dark Def-News">Техника</a></li>
+        <li><a href="{% url 'News4' %}" class="nav-link px-2 link-dark Def-News">Наука</a></li>
+        <li><a href="{% url 'News5' %}" class="nav-link px-2 link-dark Def-News">Спорт</a></li>
+        <li><a href="{% url 'News6' %}" class="nav-link px-2 link-dark Def-News">Развлечения</a></li>
+        <li><a href="{% url 'News7' %}" class="nav-link px-2 link-dark Def-News">Прочее</a></li>
       </ul>
 
       <form action="{{request.path}}" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" method="get">

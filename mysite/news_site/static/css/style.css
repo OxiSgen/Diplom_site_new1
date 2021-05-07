@@ -16,7 +16,15 @@
 }
 
 .Individual-lenta {
-    color: #a41515;
+    color: red;
+}
+
+.Hot-News {
+    color: orange;
+}
+
+.Def-News {
+    color: green;
 }
 
 

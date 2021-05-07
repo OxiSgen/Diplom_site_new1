@@ -13,6 +13,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import numpy as np
 
+import json
+
+from django.db.models import Q
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -24,7 +28,7 @@ MAX_NEWS_PER_PAGE = 200
 user_interest = []
 
 
-def base_view(request, category, category_number, view, filter_string=''):
+def base_view(request, category, category_number, view, filter_string='', order="-pub_date", flagHot=0):
     num_visits = request.session.get(view, 0)
     request.session[view] = num_visits + 1
     request.session.save()
@@ -33,11 +37,30 @@ def base_view(request, category, category_number, view, filter_string=''):
         user_category = UrlsForCategory.objects.all().filter(user=request.user, category=category_number)
         id_request = [url for url in user_category.values_list("url", flat=True)]
         user_urls_values = list(UrlsTable.objects.all().filter(id__in=id_request).values_list("url", flat=True))
-        news_list = News.objects.filter(
-            site_url__url__in=user_urls_values,
-            category__category__exact=category,
-            news_text__icontains=filter_string
-        )
+        if not flagHot:
+            news_list = News.objects.filter(
+                site_url__url__in=user_urls_values,
+                category__category__exact=category,
+                news_text__icontains=filter_string
+            ).order_by(order)
+        elif flagHot == 1:
+            news_list = News.objects.filter(
+                site_url__url__in=user_urls_values,
+                news_hype_rate__gte=50,
+                news_text__icontains=filter_string
+            ).order_by(order)
+        else:
+            curuser = CustomUser.objects.get(pk=request.user.id).user_tags
+            q = Q()
+            tags = json.loads(curuser)
+            print(tags)
+            #  tags.append(filter_string)
+            for tag in tags:
+                q |= Q(news_text__icontains=tag)
+            news_list = News.objects.filter(
+                q,
+                site_url__url__in=user_urls_values,
+            ).order_by(order)
         if len(id_request) > 1:
             uuv = [user_urls_values[i - min(id_request)] for i in id_request]
             sortkey = {j: i for i, j in enumerate(uuv)}
@@ -88,11 +111,9 @@ class News2(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Политика', 1, 'num_visits1', text)
+            return base_view(request, 'Экономика', 2, 'num_visits2', text)
         except:
-            return base_view(request, 'Политика', 1, 'num_visits1')
-        return base_view(request, 'Экономика', 2, 'num_visits2')
-
+            return base_view(request, 'Экономика', 2, 'num_visits2')
 
 
 class News3(generic.ListView):
@@ -106,7 +127,6 @@ class News3(generic.ListView):
             return base_view(request, 'Техника', 3, 'num_visits3')
 
 
-
 class News4(generic.ListView):
     news = News
 
@@ -116,7 +136,6 @@ class News4(generic.ListView):
             return base_view(request, 'Наука', 4, 'num_visits4', text)
         except:
             return base_view(request, 'Наука', 4, 'num_visits4')
-
 
 
 class News5(generic.ListView):
@@ -130,7 +149,6 @@ class News5(generic.ListView):
             return base_view(request, 'Спорт', 5, 'num_visits5')
 
 
-
 class News6(generic.ListView):
     news = News
 
@@ -140,7 +158,6 @@ class News6(generic.ListView):
             return base_view(request, 'Развлечения', 6, 'num_visits6', text)
         except:
             return base_view(request, 'Развлечения', 6, 'num_visits6')
-
 
 
 class News7(generic.ListView):
@@ -154,8 +171,7 @@ class News7(generic.ListView):
             return base_view(request, 'Прочее', 7, 'num_visits7')
 
 
-
-class NewsIndividual(generic.TemplateView):
+'''class NewsIndividual(generic.TemplateView):
     template_name = 'news_site/individual.html'
 
     def get_context_data(self, **kwargs):
@@ -174,7 +190,47 @@ class NewsIndividual(generic.TemplateView):
             'periodic': periodic_tasks,
             'urls': UrlsTable.objects.all(),
         }
-        return context
+        return context'''
+
+
+class NewsIndividual(generic.TemplateView):
+    template_name = 'news_site/individual.html'
+
+    def get(self, request):
+        curuser = CustomUser.objects.get(pk=self.request.user.id)
+        curuser.user_tags = json.dumps(['Лукашенко', 'Байден'])
+        curuser.save()
+        '''
+        num_visits8 = self.request.session.get('num_visits8', 0)
+        self.request.session['num_visits8'] = num_visits8 + 1
+        self.request.session.save()
+
+        # self.request.session.flush()
+        periodic_tasks = list(PeriodicTask.objects.all()[1:])
+
+        context = {
+            'chart': DemoChart(queryset=list(self.request.session.items())),
+            'num_visits': self.request.session.items(),  # num_visits appended
+            'periodic': periodic_tasks,
+            'urls': UrlsTable.objects.all(),
+        }'''
+        try:
+            text = self.request.GET.get('search')
+            return base_view(request, '', 1, 'num_visits7', text, flagHot=2)
+        except:
+            return base_view(request, '', 1, 'num_visits7', flagHot=2)
+
+
+class NewsHot(generic.TemplateView):
+    template_name = 'news_site/individual.html'
+
+    def get(self, request):
+        # context = super().get_context_data(**kwargs)
+        try:
+            text = request.GET.get('search')
+            return base_view(request, '', 7, 'num_visits7', text, order="-news_hype_rate", flagHot=1)
+        except:
+            return base_view(request, '', 7, 'num_visits7', order="-news_hype_rate", flagHot=1)
 
 
 class UserProfile(generic.TemplateView):

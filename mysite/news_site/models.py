@@ -18,6 +18,7 @@ class UrlsTable(models.Model):
 
 class CustomUser(AbstractUser):
     text = models.CharField(max_length=2000, null=True, blank=True)
+    user_tags = models.CharField(max_length=1000, blank=True, null=True)
     # task = models.ManyToManyField(PeriodicTask)
     '''urls = models.ManyToManyField(UrlsTable, through='PriorityForUser')
     categories = models.ManyToManyField(Category, through='CategoryForUser')'''
@@ -58,5 +59,5 @@ class News(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     # symmetrical=False для того, чтобы убрать симметрию
 
-    class Meta:
-        ordering = ["-pub_date"]
+    '''class Meta:
+        ordering = ["-pub_date"]'''

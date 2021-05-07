@@ -71,7 +71,6 @@ def rss_feeds_urls(url):
 
 def is_this_rss(rss_feed):
     # Функция проверки, является ли url rss канал rss каналом
-
     try:
         d = feedparser.parse(rss_feed).feed.link
         return True
@@ -81,7 +80,6 @@ def is_this_rss(rss_feed):
 
 def rss_text(rss_feed):
     # Функция возвращает текст из rss канала, если это действительно rss канал
-
     if is_this_rss(rss_feed):
         soup = soup_getter(rss_feed)
         if "&gt;" in str(soup):
@@ -94,7 +92,7 @@ def rss_text(rss_feed):
         # (актуально для сайтов типо Дождя и 3Dnews)
 
         
-def rss_feedparser(rss_url):
+def rss_feedparser(rss_url, href):
     # Парсим RSS канал с помощью библиотеки feedparser
     feed = []
     d = feedparser.parse(rss_url).entries
@@ -103,13 +101,7 @@ def rss_feedparser(rss_url):
             feed.append([i.title, i.link, parse(i.published), i.enclosures[0].href])
         except:
             feed.append([i.title, i.link, parse(i.published), ''])
-        '''
-        print(i.title)  # Заголовок
-        print(i.link)  # Ссылка
-        print(i.published)  # Дата публикации    
-        print(i.tags)  # Теги
-        print(i.summary)  # Текст статьи
-        '''
+
         print('\n')
     return feed
 
@@ -126,39 +118,8 @@ def news_for_parsing_html(url):
 def main(url):
     href = url
     rss = rss_feeds_urls(href)
-    return rss_feedparser(''.join(rss[0]))
+    return rss_feedparser(''.join(rss[0]), href)
 
-    '''
-    try:
-        # На дожде под значком RSS скрывается ещё одна страница с выбором лент!!!     +
-        # На 3Dnews та же фигня. Нужна дополнительная обработка.                      +
-        # Но как понять, RSS лента вернулась или нет?                                 +
-        # По расширению не получится, на 3Dnews его нет.                              +
-
-        # Повторный поиск по странице даёт необходимый канал!!!
-        # В общем случае можно использовать рекурсию
-
-        # TheWallStreetJournal почему-то не даёт вытащить rss ленту                   +
-        # Как выяснилось, у страницы возвращаемый код 403                             +
-
-        # В МК.ру rss лента спрятана в кнопке "подписка"
-        # Стоит попробовать сначала исать кнопки "Подписка"
-        # и "subscription", чтобы эффективнее искать rss каналы
-
-        # У "Аргументы и факты" вообще в жопе запрятана ссылка...
-        # Хотя общая есть и на поверхности
-
-        rss = rss_feeds_urls(href)
-        print("Удалось найти следующие rss-каналы")
-        for i, r in enumerate(rss):
-            feeds[i] = r
-        print(feeds, sep='\n')
-        
-
-    except MyException:
-        print('Затычка для парсинга HTML')
-        # news_for_parsing_html(href)
-    '''
 
 
 
