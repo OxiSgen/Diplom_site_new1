@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="album py-5 bg-light" id="content_news">
+  <div class="album py-5 bg-light main-page-news" id="content_news">
       <div class="container infinite-container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 infinite-item" >
           {% if object_list %}
@@ -41,9 +41,26 @@
                     <small class="text-muted">В других новостных источниках: <br></small>
                     {% for same_news in news.same_news.all %}
                       {% if same_news.site_url.url in urls_list %}
+                        {% if forloop.first %}
                       <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
                       <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
                       <hr>
+                        {% if forloop.revcounter > 1 %}
+                            <div class="wrapper">
+                              <div class="half">
+                                <div class="tab">
+                                  <input id="tab-{{news.news_url}}" type="checkbox" name="tabs">
+                                  <label for="tab-{{news.news_url}}">Показать больше..</label>
+                                  <div class="tab-content">
+                                    <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
+                                    <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
+                                    <hr>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        {% endif %}
+                        {% endif %}
                       {% endif %}
                     {% endfor %}
                   </div>
