@@ -28,8 +28,8 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Password:', widget=forms.PasswordInput, label_suffix='')
+    password2 = forms.CharField(label='Repeat password:', widget=forms.PasswordInput, label_suffix='')
 
     class Meta:
         model = CustomUser
@@ -40,6 +40,20 @@ class UserRegistrationForm(forms.ModelForm):
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
+
+
+class UserTagsForm(forms.ModelForm):
+    # tags = forms.CharField(label='Введите интересующие вас ключевые слова через запятую и без пробелов', widget=forms.PasswordInput)
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'user_tags')
+
+    def tags_pars(self):
+        pd = self.parse_data
+        if ' ' in pd:
+            raise forms.ValidationError('Ошибка ввода, попробуйте снова')
+        return pd
 
 
 class UserProfileForm(forms.Form):
