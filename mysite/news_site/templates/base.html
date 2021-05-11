@@ -71,9 +71,7 @@
         <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
           {% if user.is_authenticated %}
             <li><a class="dropdown-item" href="{% url 'Profile' %}">{{ user.get_username }}</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">placeholder</a></li>
-            <li><a class="dropdown-item" href="#">placeholder</a></li>
+
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url 'logout'%}?next={% url 'News1' %}">Logout</a></li>
           {% else %}
