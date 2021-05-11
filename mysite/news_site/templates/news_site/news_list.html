@@ -41,26 +41,32 @@
                     <small class="text-muted">В других новостных источниках: <br></small>
                     {% for same_news in news.same_news.all %}
                       {% if same_news.site_url.url in urls_list %}
-                        {% if forloop.first %}
-                      <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
-                      <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
-                      <hr>
-                        {% if forloop.revcounter > 1 %}
-                            <div class="wrapper">
-                              <div class="half">
-                                <div class="tab">
-                                  <input id="tab-{{news.news_url}}" type="checkbox" name="tabs">
-                                  <label for="tab-{{news.news_url}}">Показать больше..</label>
-                                  <div class="tab-content">
-                                    <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
-                                    <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
-                                    <hr>
-                                  </div>
-                                </div>
+                        <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }} </a>
+                        ({{ same_news.site_url.site_name }}) <br>
+                        <hr>
+                        <!-- {% if forloop.first %}
+                          <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
+                          <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
+                          <hr>
+                          {% if forloop.counter0 == 1 %}
+                            <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
+                            <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
+                            <hr>
+                            {% if forloop.counter0 > 1 %}
+                              <div class="tab">
+                                <input id="tab-{{news.news_url}}" type="checkbox" name="tabs">
+                                <label for="tab-{{news.news_url}}">Показать больше..</label>
+                                  <ul>
+                                    <li>
+                                        <a class="card-text" href="{{ same_news.news_url }}"> {{ same_news.news_text }}</a>
+                                      <small class="text-muted"> {{ same_news.pub_date }} {{ same_news.site_url.site_name }} <br></small>
+                                      <hr>
+                                    </li>
+                                  </ul>
                               </div>
-                            </div>
-                        {% endif %}
-                        {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %} -->
                       {% endif %}
                     {% endfor %}
                   </div>
@@ -71,7 +77,7 @@
             <p>There are no news.</p>
           {% endif %}
           {% if object_list.has_next %}
-            <a class="infinite-more-link" href="?page={{ object_list.next_page_number }}">More</a>
+            <a class="infinite-more-link" href="?page={{ object_list.next_page_number }}"></a>
           {% endif %}
           {% block javascript %}
               <script>
