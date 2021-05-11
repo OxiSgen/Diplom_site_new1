@@ -23,49 +23,59 @@
 <div class="container">
 	<div class="row">
 		<div id="Obsh" class="list-group col">
+			<h2>Общество</h2>
 			{% for item in urls %}
 				<div class="list-group-item">{{ item.url}}</div>
 			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 		<div id="Econ" class="list-group col">
-			<div class="list-group-item">Item 1</div>
-			<div class="list-group-item">Item 2</div>
-			<div class="list-group-item" draggable="false" style="">Item 3</div><div class="list-group-item bg-danger filtered" style="">Не использованные</div>
-			<div class="list-group-item">Item 4</div>
-			<div class="list-group-item">Item 5</div>
+			<h2>Экономика</h2>
+			{% for item in urls %}
+				<div class="list-group-item">{{ item.url}}</div>
+			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 		<div id="Tech" class="list-group col">
-			<div class="list-group-item order-12">Item 1</div>
-			<div class="list-group-item">Item 2</div>
-			<div class="list-group-item" draggable="false" style="">Item 3</div><div class="list-group-item bg-danger filtered" style="">Не использованные</div>
-			<div class="list-group-item">Item 4</div>
-			<div class="list-group-item">Item 5</div>
+			<h2>Техника</h2>
+			{% for item in urls %}
+				<div class="list-group-item">{{ item.url}}</div>
+			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 		<div id="Sci" class="list-group col">
-			<div class="list-group-item">Item 1</div>
-			<div class="list-group-item">Item 2</div>
-			<div class="list-group-item" draggable="false" style="">Item 3</div><div class="list-group-item bg-danger filtered" style="">Не использованные</div>
-			<div class="list-group-item">Item 4</div>
-			<div class="list-group-item">Item 5</div>
+			<h2>Наука</h2>
+			{% for item in urls %}
+				<div class="list-group-item">{{ item.url}}</div>
+			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 		<div id="Sport" class="list-group col">
-			<div class="list-group-item">Item 1</div>
-			<div class="list-group-item">Item 2</div>
-			<div class="list-group-item" draggable="false" style="">Item 3</div><div class="list-group-item bg-danger filtered" style="">Не использованные</div>
-			<div class="list-group-item">Item 4</div>
-			<div class="list-group-item">Item 5</div>
+			<h2>Спорт</h2>
+			{% for item in urls %}
+				<div class="list-group-item">{{ item.url}}</div>
+			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 		<div id="Entr" class="list-group col">
-			<div class="list-group-item">Item 1</div>
-			<div class="list-group-item">Item 2</div>
-			<div class="list-group-item" draggable="false" style="">Item 3</div><div class="list-group-item bg-danger filtered" style="">Не использованные</div>
-			<div class="list-group-item">Item 4</div>
-			<div class="list-group-item">Item 5</div>
+			<h2>Развлечения</h2>
+			{% for item in urls %}
+				<div class="list-group-item">{{ item.url}}</div>
+			{% endfor %}
+			<div class="list-group-item bg-danger filtered" style="">Не использованные</div>
 		</div>
 	</div>
 </div>
 
 	<input id='saveOrdering' class="btn btn-primary" type="submit" value="Save" name="save" />
+
+</form>
+
+
+<form class="User-tags-form" method="post" action="">
+	{{form_tag}}
+	{% csrf_token %}
+<input class="btn btn-primary-tag" type="submit" value="Save" name="save-tag" />
 </form>
 
 <script>
@@ -118,8 +128,12 @@ function saveOrdering() {
 saveOrderingButton.addEventListener('click', saveOrdering);
 
 
-
 </script>
+
+
+
+
+
 
 
 {% endblock %}
