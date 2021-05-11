@@ -36,7 +36,53 @@
 }
 
 #block {
-    height: 500px;
+    height: 600px;
+    border-bottom: 3px solid #BFE2FF;
+}
+
+.btn-group {
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+    padding-bottom: 5px;
+}
+.myclass {
+    padding-left: 5%;
+}
+
+.logo-site-logo {
+    color: indigo;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.logo-site-name {
+    color: indigo;
+    margin-right: 5px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.Individual-lenta {
+    color: red;
+}
+
+.Hot-News {
+    color: orange;
+}
+
+.Def-News {
+    color: green;
+}
+
+
+.User-profile-form {
+    border: 1px solid #c6c7cc;
+    margin: 20px;
+    padding: 20px;
+    width: 60%;
+}
+
+#block {
+    height: 600px;
     border-bottom: 3px solid #BFE2FF;
 }
 
@@ -47,7 +93,7 @@
 
 .card-img-top {
     width: 100%;
-    height: 50%;
+    height: 40%;
     object-fit: cover;
 }
 
@@ -114,95 +160,74 @@
     color: #FFF;
 }
 
-
-
-
-
-
-body {
-  color: #2c3e50;
-  background: #ecf0f1;
+.form-signin {
+    padding-left: 30%;
+    padding-right: 30%;
+    padding-top: 2%;
 }
-h1 {
-  text-align: center;
+
+.login-zag{
+    padding-top: 5%;
 }
-.half {
-  float: left;
+
+
+
+
+* {box-sizing: border-box}
+
+/* Add padding to containers */
+
+
+/* Full-width input fields */
+#id_username, #id_email, #id_password, #id_password2 {
   width: 100%;
-  padding: 0 1em;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
 }
-/* Acordeon styles */
-.tab {
-  position: relative;
-  margin-bottom: 1px;
-  width: 100%;
-  color: #fff;
-  overflow: hidden;
+
+.form-register {
+    padding-left: 35%;
+    padding-right: 35%;
+    padding-top: 1%;
 }
-.tab input {
-  position: absolute;
-  opacity: 0;
-  z-index: -1;
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
 }
-.tab label {
-  position: relative;
-  display: block;
-  padding: 0 0 0 1em;
-  background: #16a085;
-  font-weight: bold;
-  line-height: 3;
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #c1c1c1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for the submit/register button */
+.registerbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
   cursor: pointer;
-}
-.blue label {
-  background: #2980b9;
-}
-.tab-content {
-  max-height: 0;
-  overflow: hidden;
-  background: #1abc9c;
-  -webkit-transition: max-height .35s;
-  -o-transition: max-height .35s;
-  transition: max-height .35s;
-}
-.blue .tab-content {
-  background: #3498db;
-}
-.tab-content p {
-  margin: 1em;
-}
-/* :checked */
-.tab input:checked ~ .tab-content {
-  max-height: 100vh;
+  width: 100%;
+  opacity: 0.9;
 }
 
-/* Icon */
-.tab label::after {
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: block;
-  width: 3em;
-  height: 3em;
-  line-height: 3;
+.registerbtn:hover {
+  opacity:1;
+}
+
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
   text-align: center;
-  -webkit-transition: all .35s;
-  -o-transition: all .35s;
-  transition: all .35s;
 }
-.tab input[type=checkbox] + label::after {
-  content: "?";
-}
-.tab input[type=radio] + label::after {
-  content: "\25BC";
-}
-.tab input[type=checkbox]:checked + label::after {
-  transform: rotate(315deg);
-}
-.tab input[type=radio]:checked + label::after {
-  transform: rotateX(180deg);
-}
-
-
-/* profile form */
-
 
