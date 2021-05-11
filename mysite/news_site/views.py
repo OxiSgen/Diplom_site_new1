@@ -7,7 +7,8 @@ from django_celery_beat.models import PeriodicTask
 
 from .charts import DemoChart
 
-from .forms import UserProfileForm, UserRegistrationForm
+from .forms import UserProfileForm, UserRegistrationForm, UserTagsForm
+'''UserTagsForm'''
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -20,6 +21,8 @@ from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+import datetime
+
 
 import pickle
 
@@ -28,7 +31,7 @@ MAX_NEWS_PER_PAGE = 200
 user_interest = []
 
 
-def base_view(request, category, category_number, view, filter_string='', order="-pub_date", flagHot=0):
+def base_view(request, category, category_number, view, filter_string='', order="-pub_date", flagHot=0, flag_date=False):
     num_visits = request.session.get(view, 0)
     request.session[view] = num_visits + 1
     request.session.save()
@@ -38,17 +41,37 @@ def base_view(request, category, category_number, view, filter_string='', order=
         id_request = [url for url in user_category.values_list("url", flat=True)]
         user_urls_values = list(UrlsTable.objects.all().filter(id__in=id_request).values_list("url", flat=True))
         if not flagHot:
-            news_list = News.objects.filter(
-                site_url__url__in=user_urls_values,
-                category__category__exact=category,
-                news_text__icontains=filter_string
-            ).order_by(order)
+            if not flag_date:
+                news_list = News.objects.filter(
+                    site_url__url__in=user_urls_values,
+                    category__category__exact=category,
+                    news_text__icontains=filter_string
+                ).order_by(order)
+            else:
+                date = filter_string.split('-')
+                news_list = News.objects.filter(
+                    site_url__url__in=user_urls_values,
+                    category__category__exact=category,
+                    pub_date__year=date[0],
+                    pub_date__month=date[1],
+                    pub_date__day=date[2],
+                ).order_by(order)
         elif flagHot == 1:
-            news_list = News.objects.filter(
-                site_url__url__in=user_urls_values,
-                news_hype_rate__gte=50,
-                news_text__icontains=filter_string
-            ).order_by(order)
+            if not flag_date:
+                news_list = News.objects.filter(
+                    site_url__url__in=user_urls_values,
+                    news_hype_rate__gte=50,
+                    news_text__icontains=filter_string
+                ).order_by(order)
+            else:
+                date = filter_string.split('-')
+                news_list = News.objects.filter(
+                    site_url__url__in=user_urls_values,
+                    news_hype_rate__gte=50,
+                    pub_date__year=date[0],
+                    pub_date__month=date[1],
+                    pub_date__day=date[2],
+                ).order_by(order)
         else:
             curuser = CustomUser.objects.get(pk=request.user.id).user_tags
             q = Q()
@@ -100,7 +123,11 @@ class News1(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Политика', 1, 'num_visits1', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Политика', 1, 'num_visits1', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Политика', 1, 'num_visits1', text)
         except:
             return base_view(request, 'Политика', 1, 'num_visits1')
 
@@ -111,7 +138,11 @@ class News2(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Экономика', 2, 'num_visits2', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Экономика', 2, 'num_visits2', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Экономика', 2, 'num_visits2', text)
         except:
             return base_view(request, 'Экономика', 2, 'num_visits2')
 
@@ -122,7 +153,11 @@ class News3(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Техника', 3, 'num_visits3', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Техника', 3, 'num_visits3', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Техника', 3, 'num_visits3', text)
         except:
             return base_view(request, 'Техника', 3, 'num_visits3')
 
@@ -133,7 +168,11 @@ class News4(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Наука', 4, 'num_visits4', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Наука', 4, 'num_visits4', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Наука', 4, 'num_visits4', text)
         except:
             return base_view(request, 'Наука', 4, 'num_visits4')
 
@@ -144,7 +183,11 @@ class News5(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Спорт', 5, 'num_visits5', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Спорт', 5, 'num_visits5', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Спорт', 5, 'num_visits5', text)
         except:
             return base_view(request, 'Спорт', 5, 'num_visits5')
 
@@ -155,7 +198,11 @@ class News6(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Развлечения', 6, 'num_visits6', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Развлечения', 6, 'num_visits6', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Развлечения', 6, 'num_visits6', text)
         except:
             return base_view(request, 'Развлечения', 6, 'num_visits6')
 
@@ -166,7 +213,11 @@ class News7(generic.ListView):
     def get(self, request):
         try:
             text = self.request.GET.get('search')
-            return base_view(request, 'Прочее', 7, 'num_visits7', text)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, 'Прочее', 7, 'num_visits7', text, flag_date=True)
+            except ValueError:
+                return base_view(request, 'Прочее', 7, 'num_visits7', text)
         except:
             return base_view(request, 'Прочее', 7, 'num_visits7')
 
@@ -198,7 +249,7 @@ class NewsIndividual(generic.TemplateView):
 
     def get(self, request):
         curuser = CustomUser.objects.get(pk=self.request.user.id)
-        curuser.user_tags = json.dumps(['Лукашенко', 'Байден'])
+        curuser.user_tags = json.dumps(['Лукашенко', 'Байден', 'Вашингтон', 'Путин', 'Процессор'])
         curuser.save()
         '''
         num_visits8 = self.request.session.get('num_visits8', 0)
@@ -216,9 +267,9 @@ class NewsIndividual(generic.TemplateView):
         }'''
         try:
             text = self.request.GET.get('search')
-            return base_view(request, '', 1, 'num_visits7', text, flagHot=2)
+            return base_view(request, '', 7, 'num_visits7', text, flagHot=2)
         except:
-            return base_view(request, '', 1, 'num_visits7', flagHot=2)
+            return base_view(request, '', 7, 'num_visits7', flagHot=2)
 
 
 class NewsHot(generic.TemplateView):
@@ -228,7 +279,11 @@ class NewsHot(generic.TemplateView):
         # context = super().get_context_data(**kwargs)
         try:
             text = request.GET.get('search')
-            return base_view(request, '', 7, 'num_visits7', text, order="-news_hype_rate", flagHot=1)
+            try:
+                datetime.datetime.strptime(text, '%Y-%m-%d')
+                return base_view(request, '', 7, 'num_visits7', text, order="-news_hype_rate", flagHot=1, flag_date=True)
+            except ValueError:
+                return base_view(request, '', 7, 'num_visits7', text, order="-news_hype_rate", flagHot=1)
         except:
             return base_view(request, '', 7, 'num_visits7', order="-news_hype_rate", flagHot=1)
 
@@ -244,17 +299,30 @@ class UserProfile(generic.TemplateView):
         user_urls_sci = UrlsForCategory.objects.all().filter(user=self.request.user, category=4)
         user_urls_sport = UrlsForCategory.objects.all().filter(user=self.request.user, category=5)
         user_urls_entr = UrlsForCategory.objects.all().filter(user=self.request.user, category=6)
-        if self.request.method == 'POST':
-            if "save" in self.request.POST:
-                pass
-                # form = UserProfileForm(self.request.POST)
-                # form.fields['urls'].queryset = PriorityForUser.objects.all().filter(user=self.request.user)
-        else:
+
+        if self.request.method == 'POST' and 'save' in self.request.POST:
             form = UserProfileForm(initial={
                 'all_urls': [
                     url for url in user_urls.values_list("url", flat=True)
                 ]
             })
+
+        else:
+            curuser = CustomUser.objects.get(pk=self.request.user.id)
+            form = UserTagsForm(self.request.POST, instance=curuser)
+
+
+
+        '''if self.request.method == 'POST':
+            user_form = UserTagsForm(self.request.POST)
+            if user_form.is_valid():
+                curuser = CustomUser.objects.get(pk=self.request.user.id)
+                curuser.user_tags = json.dumps(str(user_form.parse_data).split(','))
+                curuser.save()
+                return render(self.request, 'profile.html', {'user_form': user_form})
+        else:
+            user_form = UserRegistrationForm()
+        return render(self.request, 'profile.html', {'user_form': user_form})'''
 
         context = {
             'user_urls': user_urls,
@@ -266,6 +334,7 @@ class UserProfile(generic.TemplateView):
             'user_urls_entr': user_urls_entr,
             'urls': UrlsTable.objects.all(),
             'form': form,
+            'form_tag': form,
         }
         return context
 
@@ -288,3 +357,4 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'register.html', {'user_form': user_form})
+
