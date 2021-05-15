@@ -28,6 +28,8 @@ from django.core import serializers
 
 import datetime
 
+from django.contrib import messages
+
 
 import pickle
 
@@ -81,7 +83,6 @@ def base_view(request, category, category_number, view, filter_string='', order=
             curuser = CustomUser.objects.get(pk=request.user.id).user_tags
             q = Q()
             tags = json.loads(curuser)
-            print(tags)
             #  tags.append(filter_string)
             for tag in tags:
                 q |= Q(news_text__icontains=tag)
@@ -374,9 +375,8 @@ class UserProfile(generic.TemplateView):
             instance = context['form_tag'].save(commit=False)
             instance.user_tags = request.POST['user_tags']
             instance.save()
-
         else:
-            render('Error(s) encountered during form processing, please review below and re-submit')
+            pass
 
         return self.render_to_response(context)
 
@@ -403,14 +403,3 @@ def register(request):
         user_form = UserRegistrationForm()
     return render(request, 'register.html', {'user_form': user_form})
 
-
-'''if self.request.method == 'POST':
-    user_form = UserTagsForm(self.request.POST)
-    if user_form.is_valid():
-        curuser = CustomUser.objects.get(pk=self.request.user.id)
-        curuser.user_tags = json.dumps(str(user_form.parse_data).split(','))
-        curuser.save()
-        return render(self.request, 'profile.html', {'user_form': user_form})
-else:
-    user_form = UserRegistrationForm()
-return render(self.request, 'profile.html', {'user_form': user_form})'''

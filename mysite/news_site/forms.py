@@ -9,11 +9,14 @@ class NewsIndividual(forms.Form):
         data = self.cleaned_data['renewal_date']
         return data'''
 import json
+from json import JSONDecodeError
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, UrlsTable
+import re
 
+DANGER_SYMBOLS = set('#')
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -55,11 +58,15 @@ class UserTagsForm(forms.ModelForm):
         }
 
     def clean_user_tags(self):
-        '''pd = json.loads(user_tags)
-        if ' ' in pd:
-            raise forms.ValidationError('Ошибка ввода, попробуйте снова')
-        return pd'''
-        pass
+        try:
+            pd = json.loads(self.cleaned_data.get('user_tags'))
+        except JSONDecodeError:
+            raise forms.ValidationError('Нарушена структура данных')
+        for item in pd:
+            print(set(item))
+            if re.search("[<>()^@&#]", item):
+                raise forms.ValidationError('Ошибка ввода, присутсвуют недопустимые символы')
+        return pd
 
 
 class UserProfileForm(forms.Form):
