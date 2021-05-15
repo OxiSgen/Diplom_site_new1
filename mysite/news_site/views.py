@@ -253,9 +253,9 @@ class NewsIndividual(generic.TemplateView):
     template_name = 'news_site/individual.html'
 
     def get(self, request):
-        curuser = CustomUser.objects.get(pk=self.request.user.id)
-        curuser.user_tags = json.dumps([u'Лукашенко', u'Байден', u'Вашингтон', u'Путин', u'kjkljljl'], ensure_ascii=False)
-        curuser.save()
+        '''curuser = CustomUser.objects.get(pk=self.request.user.id)
+        curuser.user_tags = json.dumps([u'Лукашенко', u'Байден', u'Вашингтон', u'Путин', u'Война'], ensure_ascii=False)
+        curuser.save()'''
         '''
         num_visits8 = self.request.session.get('num_visits8', 0)
         self.request.session['num_visits8'] = num_visits8 + 1
@@ -349,8 +349,8 @@ class UserProfile(generic.TemplateView):
             data=self.request.POST if 'save' in self.request.POST else None,
         )
         context['form_tag'] = UserTagsForm(
-            data=self.request.POST if 'sv-tag' in self.request.POST else None,
-            instance=curuser,
+            instance = curuser,
+            data = self.request.POST if 'sv-tag' in self.request.POST else None,
         )
         context['user_urls'] = UrlsForCategory.objects.all().filter(user=self.request.user)
         context['user_urls_pol'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=1)
@@ -364,8 +364,6 @@ class UserProfile(generic.TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        print(context)
-        curuser = CustomUser.objects.get(pk=self.request.user.id)
 
         if context['form'].is_valid():
             '''instance = context['form'].save()
@@ -373,9 +371,12 @@ class UserProfile(generic.TemplateView):
             pass
 
         elif context['form_tag'].is_valid():
-            context['form_tag'](instance=curuser)
-            instance = context['form_tag'].save()
-            render(request, context, instance.pk)
+            instance = context['form_tag'].save(commit=False)
+            instance.user_tags = request.POST['user_tags']
+            instance.save()
+
+        else:
+            render('Error(s) encountered during form processing, please review below and re-submit')
 
         return self.render_to_response(context)
 

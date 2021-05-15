@@ -25,9 +25,6 @@ class CustomUser(AbstractUser):
     '''urls = models.ManyToManyField(UrlsTable, through='PriorityForUser')
     categories = models.ManyToManyField(Category, through='CategoryForUser')'''
 
-    def __str__(self):
-        return str(self.user_tags)
-
 
 '''class PriorityForUser(models.Model):
     url = models.ForeignKey(UrlsTable, on_delete=models.CASCADE)

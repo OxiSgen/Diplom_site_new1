@@ -46,7 +46,6 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserTagsForm(forms.ModelForm):
-    # tags = forms.CharField(label='Введите интересующие вас ключевые слова через запятую и без пробелов', widget=forms.PasswordInput)
 
     class Meta:
         model = CustomUser
@@ -56,10 +55,11 @@ class UserTagsForm(forms.ModelForm):
         }
 
     def clean_user_tags(self):
-        pd = json.loads(self.user_tags)
+        '''pd = json.loads(user_tags)
         if ' ' in pd:
             raise forms.ValidationError('Ошибка ввода, попробуйте снова')
-        return pd
+        return pd'''
+        pass
 
 
 class UserProfileForm(forms.Form):
