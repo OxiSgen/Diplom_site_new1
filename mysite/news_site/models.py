@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django_celery_beat.models import PeriodicTask
+import json
 
 
 # Create your models here.
@@ -23,6 +25,8 @@ class CustomUser(AbstractUser):
     '''urls = models.ManyToManyField(UrlsTable, through='PriorityForUser')
     categories = models.ManyToManyField(Category, through='CategoryForUser')'''
 
+    def __str__(self):
+        return str(self.user_tags)
 
 
 '''class PriorityForUser(models.Model):

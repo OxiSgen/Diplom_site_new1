@@ -72,12 +72,6 @@
 </form>
 
 
-<form class="User-tags-form" method="post" action="">
-	{{form_tag}}
-	{% csrf_token %}
-<input class="btn btn-primary-tag" type="submit" value="Save" name="save-tag" />
-</form>
-
 <script>
 new Sortable(Obsh, {
     filter: '.filtered', // 'filtered' class is not draggable
@@ -131,7 +125,11 @@ saveOrderingButton.addEventListener('click', saveOrdering);
 </script>
 
 
-
+<form class="User-tags-form" method="post" action="/news_site/profile/">
+	{% csrf_token %}
+	{{form_tag|crispy}}
+<input class="btn btn-primary" type="submit" value="Save" name="sv-tag" />
+</form>
 
 
 

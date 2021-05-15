@@ -81,6 +81,13 @@
     width: 60%;
 }
 
+.User-tags-form {
+    border: 1px solid #c6c7cc;
+    margin: 20px;
+    padding: 20px;
+    width: 60%;
+}
+
 #block {
     height: 600px;
     border-bottom: 3px solid #BFE2FF;

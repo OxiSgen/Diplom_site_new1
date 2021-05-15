@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import requests
 from django.shortcuts import render
 from django.views import generic
@@ -20,6 +21,10 @@ from django.db.models import Q
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+
+from django.forms.models import model_to_dict
+
+from django.core import serializers
 
 import datetime
 
@@ -249,7 +254,7 @@ class NewsIndividual(generic.TemplateView):
 
     def get(self, request):
         curuser = CustomUser.objects.get(pk=self.request.user.id)
-        curuser.user_tags = json.dumps(['Лукашенко', 'Байден', 'Вашингтон', 'Путин', 'Процессор'])
+        curuser.user_tags = json.dumps([u'Лукашенко', u'Байден', u'Вашингтон', u'Путин', u'kjkljljl'], ensure_ascii=False)
         curuser.save()
         '''
         num_visits8 = self.request.session.get('num_visits8', 0)
@@ -288,17 +293,37 @@ class NewsHot(generic.TemplateView):
             return base_view(request, '', 7, 'num_visits7', order="-news_hype_rate", flagHot=1)
 
 
-class UserProfile(generic.TemplateView):
+class UserProfile(generic.FormView):
     template_name = 'news_site/profile.html'
 
     def get_context_data(self, **kwargs):
+        # context = super(UserProfile, self).get_context_data(**kwargs)
         user_urls = UrlsForCategory.objects.all().filter(user=self.request.user)
-        user_urls_pol = UrlsForCategory.objects.all().filter(user=self.request.user, category=1)
-        user_urls_econ = UrlsForCategory.objects.all().filter(user=self.request.user, category=2)
-        user_urls_tech = UrlsForCategory.objects.all().filter(user=self.request.user, category=3)
-        user_urls_sci = UrlsForCategory.objects.all().filter(user=self.request.user, category=4)
-        user_urls_sport = UrlsForCategory.objects.all().filter(user=self.request.user, category=5)
-        user_urls_entr = UrlsForCategory.objects.all().filter(user=self.request.user, category=6)
+
+        form = UserProfileForm(initial={
+            'all_urls': [
+                url for url in user_urls.values_list("url", flat=True)
+            ]
+        })
+        curuser = CustomUser.objects.get(pk=self.request.user.id)
+        form_tag = UserTagsForm(instance=curuser)
+
+        context = {
+            'user_urls': UrlsForCategory.objects.all().filter(user=self.request.user),
+            'user_urls_pol': UrlsForCategory.objects.all().filter(user=self.request.user, category=1),
+            'user_urls_econ': UrlsForCategory.objects.all().filter(user=self.request.user, category=2),
+            'user_urls_tech': UrlsForCategory.objects.all().filter(user=self.request.user, category=3),
+            'user_urls_sci': UrlsForCategory.objects.all().filter(user=self.request.user, category=4),
+            'user_urls_sport': UrlsForCategory.objects.all().filter(user=self.request.user, category=5),
+            'user_urls_entr': UrlsForCategory.objects.all().filter(user=self.request.user, category=6),
+            'urls': UrlsTable.objects.all(),
+            'form': form,
+            'form_tag': form_tag,
+        }
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user_urls = UrlsForCategory.objects.all().filter(user=self.request.user)
 
         if self.request.method == 'POST' and 'save' in self.request.POST:
             form = UserProfileForm(initial={
@@ -306,37 +331,18 @@ class UserProfile(generic.TemplateView):
                     url for url in user_urls.values_list("url", flat=True)
                 ]
             })
-
+        if self.request.method == 'POST' and 'sv-tag' in self.request.POST:
+            form_tag = UserTagsForm(self.request.POST)
+            if form_tag.is_valid():
+                print(form_tag.user_tags)
+                instance = form_tag.save()
         else:
             curuser = CustomUser.objects.get(pk=self.request.user.id)
-            form = UserTagsForm(self.request.POST, instance=curuser)
+            form_tag = UserTagsForm(instance=curuser)
+
+        return render(request, self.template_name, {'form_tag': form_tag})
 
 
-
-        '''if self.request.method == 'POST':
-            user_form = UserTagsForm(self.request.POST)
-            if user_form.is_valid():
-                curuser = CustomUser.objects.get(pk=self.request.user.id)
-                curuser.user_tags = json.dumps(str(user_form.parse_data).split(','))
-                curuser.save()
-                return render(self.request, 'profile.html', {'user_form': user_form})
-        else:
-            user_form = UserRegistrationForm()
-        return render(self.request, 'profile.html', {'user_form': user_form})'''
-
-        context = {
-            'user_urls': user_urls,
-            'user_urls_pol': user_urls_pol,
-            'user_urls_econ': user_urls_econ,
-            'user_urls_tech': user_urls_tech,
-            'user_urls_sci': user_urls_sci,
-            'user_urls_sport': user_urls_sport,
-            'user_urls_entr': user_urls_entr,
-            'urls': UrlsTable.objects.all(),
-            'form': form,
-            'form_tag': form,
-        }
-        return context
 
 
 class Unregistered(generic.TemplateView):
@@ -358,3 +364,14 @@ def register(request):
         user_form = UserRegistrationForm()
     return render(request, 'register.html', {'user_form': user_form})
 
+
+'''if self.request.method == 'POST':
+    user_form = UserTagsForm(self.request.POST)
+    if user_form.is_valid():
+        curuser = CustomUser.objects.get(pk=self.request.user.id)
+        curuser.user_tags = json.dumps(str(user_form.parse_data).split(','))
+        curuser.save()
+        return render(self.request, 'profile.html', {'user_form': user_form})
+else:
+    user_form = UserRegistrationForm()
+return render(self.request, 'profile.html', {'user_form': user_form})'''

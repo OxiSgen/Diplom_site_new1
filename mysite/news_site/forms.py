@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''from django import forms
 
 
@@ -7,10 +8,12 @@ class NewsIndividual(forms.Form):
     def clean_renewal_date(self):
         data = self.cleaned_data['renewal_date']
         return data'''
+import json
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, UrlsTable
+
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -47,10 +50,13 @@ class UserTagsForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'user_tags')
+        fields = ['user_tags']
+        widgets = {
+            'user_tags': forms.Textarea(),
+        }
 
-    def tags_pars(self):
-        pd = self.parse_data
+    def clean_user_tags(self):
+        pd = json.loads(self.user_tags)
         if ' ' in pd:
             raise forms.ValidationError('Ошибка ввода, попробуйте снова')
         return pd
