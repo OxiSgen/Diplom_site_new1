@@ -293,20 +293,12 @@ class NewsHot(generic.TemplateView):
             return base_view(request, '', 7, 'num_visits7', order="-news_hype_rate", flagHot=1)
 
 
-class UserProfile(generic.FormView):
+'''class UserProfile(generic.FormView):
     template_name = 'news_site/profile.html'
 
     def get_context_data(self, **kwargs):
         # context = super(UserProfile, self).get_context_data(**kwargs)
-        user_urls = UrlsForCategory.objects.all().filter(user=self.request.user)
-
-        form = UserProfileForm(initial={
-            'all_urls': [
-                url for url in user_urls.values_list("url", flat=True)
-            ]
-        })
         curuser = CustomUser.objects.get(pk=self.request.user.id)
-        form_tag = UserTagsForm(instance=curuser)
 
         context = {
             'user_urls': UrlsForCategory.objects.all().filter(user=self.request.user),
@@ -317,8 +309,7 @@ class UserProfile(generic.FormView):
             'user_urls_sport': UrlsForCategory.objects.all().filter(user=self.request.user, category=5),
             'user_urls_entr': UrlsForCategory.objects.all().filter(user=self.request.user, category=6),
             'urls': UrlsTable.objects.all(),
-            'form': form,
-            'form_tag': form_tag,
+            'form_tag': UserTagsForm(instance=curuser),
         }
         return context
 
@@ -340,7 +331,54 @@ class UserProfile(generic.FormView):
             curuser = CustomUser.objects.get(pk=self.request.user.id)
             form_tag = UserTagsForm(instance=curuser)
 
-        return render(request, self.template_name, {'form_tag': form_tag})
+        return render(request, self.template_name, {'form_tag': form_tag})'''
+
+
+def _get_form(request, form_name, prefix):
+    data = request.POST if prefix in request.POST else None
+    return form_name(data, prefix=prefix)
+
+
+class UserProfile(generic.TemplateView):
+    template_name = 'news_site/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfile, self).get_context_data(**kwargs)
+        curuser = CustomUser.objects.get(pk=self.request.user.id)
+        context['form'] = UserProfileForm(
+            data=self.request.POST if 'save' in self.request.POST else None,
+        )
+        context['form_tag'] = UserTagsForm(
+            data=self.request.POST if 'sv-tag' in self.request.POST else None,
+            instance=curuser,
+        )
+        context['user_urls'] = UrlsForCategory.objects.all().filter(user=self.request.user)
+        context['user_urls_pol'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=1)
+        context['user_urls_econ'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=2)
+        context['user_urls_tech'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=3)
+        context['user_urls_sci'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=4)
+        context['user_urls_sport'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=5)
+        context['user_urls_entr'] = UrlsForCategory.objects.all().filter(user=self.request.user, category=6)
+        context['urls'] = UrlsTable.objects.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        print(context)
+        curuser = CustomUser.objects.get(pk=self.request.user.id)
+
+        if context['form'].is_valid():
+            '''instance = context['form'].save()
+            render(request, context, instance.pk)'''
+            pass
+
+        elif context['form_tag'].is_valid():
+            context['form_tag'](instance=curuser)
+            instance = context['form_tag'].save()
+            render(request, context, instance.pk)
+
+        return self.render_to_response(context)
+
 
 
 
